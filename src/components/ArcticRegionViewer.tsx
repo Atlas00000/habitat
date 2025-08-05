@@ -1,6 +1,6 @@
 "use client"
 
-import React, { Suspense, useState } from 'react'
+import React, { Suspense, useState, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { EnvironmentScene } from './3D/EnvironmentScene'
 import { FloatingDataPanel } from './FloatingDataPanel'
@@ -21,10 +21,19 @@ export const ArcticRegionViewer: React.FC<ArcticRegionViewerProps> = ({
   const [showCameraInfo, setShowCameraInfo] = useState(false)
   const [showCameraHelp, setShowCameraHelp] = useState(false)
   const [isSceneLoading, setIsSceneLoading] = useState(true)
+  const [enableShadows, setEnableShadows] = useState(true)
 
   const handleAssetSelect = (asset: CloudflareAsset) => {
     setSelectedAsset(asset)
   }
+
+  // Disable shadows on mobile for better performance
+  useEffect(() => {
+    const isMobile = window.innerWidth < 768
+    if (isMobile) {
+      setEnableShadows(false)
+    }
+  }, [])
 
   return (
     <div className={`relative w-full h-full ${className}`}>
@@ -32,8 +41,14 @@ export const ArcticRegionViewer: React.FC<ArcticRegionViewerProps> = ({
       <Canvas
         camera={{ position: [0, 5, 10], fov: 60 }}
         className="w-full h-full"
-        shadows
-        gl={{ antialias: true, alpha: true }}
+        shadows={enableShadows}
+        gl={{ 
+          antialias: true, 
+          alpha: true,
+          powerPreference: "high-performance",
+          stencil: false,
+          depth: true
+        }}
         style={{ width: '100vw', height: '100vh' }}
       >
         <Suspense fallback={null}>
@@ -44,6 +59,7 @@ export const ArcticRegionViewer: React.FC<ArcticRegionViewerProps> = ({
             cameraMode={cameraMode}
             showCameraInfo={showCameraInfo}
             onSceneReady={() => setIsSceneLoading(false)}
+            enableShadows={enableShadows}
           />
         </Suspense>
       </Canvas>

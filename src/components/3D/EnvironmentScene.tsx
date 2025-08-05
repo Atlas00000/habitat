@@ -16,6 +16,7 @@ interface EnvironmentSceneProps {
   cameraMode?: 'orbit' | 'follow'
   onSceneReady?: () => void
   showCameraInfo?: boolean
+  enableShadows?: boolean
 }
 
 // Camera Controller Component with enhanced floor protection
@@ -73,7 +74,8 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
   onAssetSelect,
   cameraMode = 'orbit',
   onSceneReady,
-  showCameraInfo = false
+  showCameraInfo = false,
+  enableShadows = true
 }) => {
   const [assets, setAssets] = useState<CloudflareAsset[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -179,9 +181,14 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
       <directionalLight
         position={[10, 10, 5]}
         intensity={1}
-        castShadow
-        shadow-mapSize-width={2048}
-        shadow-mapSize-height={2048}
+        castShadow={enableShadows}
+        shadow-mapSize-width={enableShadows ? 1024 : 512}
+        shadow-mapSize-height={enableShadows ? 1024 : 512}
+        shadow-camera-far={50}
+        shadow-camera-left={-25}
+        shadow-camera-right={25}
+        shadow-camera-top={25}
+        shadow-camera-bottom={-25}
       />
       <pointLight position={[-10, 10, -10]} intensity={0.5} />
       
@@ -193,13 +200,13 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
       )}
       
       {/* Ground Plane - Customize based on category */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.5, 0]} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.5, 0]} receiveShadow={enableShadows}>
         <planeGeometry args={[50, 50]} />
         <meshStandardMaterial color={colors.ground} />
       </mesh>
       
       {/* Terrain Layer - Customize based on category */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.4, 0]} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.4, 0]} receiveShadow={enableShadows}>
         <planeGeometry args={[40, 40]} />
         <meshStandardMaterial color={colors.terrain} />
       </mesh>

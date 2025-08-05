@@ -4,6 +4,8 @@ import React, { Suspense, useState, useEffect } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls, Environment, Sky, useTexture } from '@react-three/drei'
 import { CloudflareModel } from './CloudflareModel'
+import { CameraBounds } from './CameraBounds'
+import { CameraPositionIndicator } from './CameraPositionIndicator'
 import { getAssetsByCategory, CloudflareAsset } from '../../config/cloudflare'
 
 interface EnvironmentSceneProps {
@@ -12,9 +14,10 @@ interface EnvironmentSceneProps {
   onAssetSelect?: (asset: CloudflareAsset) => void
   cameraMode?: 'orbit' | 'follow'
   onSceneReady?: () => void
+  showCameraInfo?: boolean
 }
 
-// Camera Controller Component
+// Camera Controller Component with enhanced floor protection
 function CameraController() {
   const { camera } = useThree()
   
@@ -31,10 +34,13 @@ function CameraController() {
     camera.position.z = Math.cos(time) * 0.3 + 8
     camera.position.y = 2 + Math.sin(time * 2) * 0.1
     
-    // Keep camera within reasonable bounds
-    camera.position.x = Math.max(-10, Math.min(10, camera.position.x))
-    camera.position.z = Math.max(3, Math.min(10, camera.position.z))
-    camera.position.y = Math.max(1, Math.min(8, camera.position.y))
+    // Enhanced bounds to prevent going under floor and out of view
+    camera.position.x = Math.max(-12, Math.min(12, camera.position.x))
+    camera.position.z = Math.max(4, Math.min(12, camera.position.z))
+    camera.position.y = Math.max(2, Math.min(10, camera.position.y)) // Stronger floor protection
+    
+    // Ensure camera always looks at the scene center
+    camera.lookAt(0, 1, 0)
   })
   
   return null
@@ -65,7 +71,8 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
   selectedAssetId,
   onAssetSelect,
   cameraMode = 'orbit',
-  onSceneReady
+  onSceneReady,
+  showCameraInfo = false
 }) => {
   const [assets, setAssets] = useState<CloudflareAsset[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -209,6 +216,9 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
                      scale={scale}
                      onClick={() => handleAssetClick(asset)}
                      onError={(error) => console.error(`Failed to load ${asset.name}:`, error)}
+                     onAnimationsLoaded={(animations) => {
+                       console.log(`Animations loaded for ${asset.name}:`, animations)
+                     }}
                    />
                  )
                })}
@@ -219,9 +229,10 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
           enablePan={true}
           enableZoom={true}
           enableRotate={true}
-          maxPolarAngle={Math.PI / 2}
-          minDistance={3}
-          maxDistance={10}
+          maxPolarAngle={Math.PI / 2.2} // Prevent going below ground
+          minPolarAngle={0.1} // Prevent going too high
+          minDistance={4}
+          maxDistance={12}
           target={[0, 1, 0]}
           // Add damping for smoother movement
           enableDamping={true}
@@ -233,6 +244,18 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
       ) : (
         <CameraController />
       )}
+      
+      {/* Camera Bounds Protection */}
+      <CameraBounds 
+        minY={1.5}
+        maxY={15}
+        minDistance={3}
+        maxDistance={15}
+        target={[0, 1, 0]}
+      />
+      
+      {/* Camera Position Indicator */}
+      <CameraPositionIndicator show={showCameraInfo} />
     </>
   )
 } 

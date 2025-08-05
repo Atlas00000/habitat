@@ -15,22 +15,25 @@ export interface Animal {
 }
 
 export const deerData: Animal = {
-  name: "Deer",
-  scientificName: "Cervidae",
-  habitat: "Forest regions and woodlands",
-  diet: ["Grasses", "Leaves", "Twigs", "Fruits", "Nuts"],
+  name: "White-tailed Deer",
+  scientificName: "Odocoileus virginianus",
+  habitat: "Forest regions, woodlands, and meadows across North America",
+  diet: ["Grasses", "Leaves", "Twigs", "Fruits", "Nuts", "Bark", "Mushrooms", "Agricultural crops"],
   conservationStatus: "Least Concern",
   funFacts: [
-    "Deer are excellent swimmers and can cross rivers and lakes",
-    "They have excellent hearing and can rotate their ears 180 degrees",
-    "Male deer grow and shed their antlers every year",
-    "Deer can run up to 30 mph and jump up to 10 feet high",
-    "They have a special stomach with four chambers for digesting tough plant material"
+    "White-tailed deer can run up to 30 mph and jump up to 10 feet high",
+    "They have excellent hearing and can rotate their ears 180 degrees to detect predators",
+    "Male deer grow and shed their antlers every year - a unique mammalian trait",
+    "Deer are excellent swimmers and can cross rivers and lakes when needed",
+    "They have a special four-chambered stomach for digesting tough plant material",
+    "White-tailed deer can see in color and have excellent night vision",
+    "They communicate through scent marking, vocalizations, and body language",
+    "Fawns are born with white spots that help them camouflage in dappled sunlight"
   ],
   stats: {
-    weight: "150-300 lbs",
-    height: "3-4 feet",
-    lifespan: "10-15 years",
-    speed: "30 mph"
+    weight: "150-300 lbs (males), 90-200 lbs (females)",
+    height: "3-4 feet at shoulder",
+    lifespan: "10-15 years in the wild",
+    speed: "30 mph (48 km/h)"
   }
 } 

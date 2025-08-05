@@ -10,4 +10,4 @@ export { FloatingDataPanel } from './FloatingDataPanel'
 export { SceneViewport } from './SceneViewport'
 
 // Legacy components (for backward compatibility)
-export { default as GLTFModel } from './gltf-model' 
+export { GLTFModel } from './gltf-model' 

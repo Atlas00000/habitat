@@ -4,6 +4,7 @@ import React, { Suspense, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { EnvironmentScene } from './3D/EnvironmentScene'
 import { FloatingDataPanel } from './FloatingDataPanel'
+import { CameraHelpOverlay } from './3D/CameraHelpOverlay'
 import { CloudflareAsset } from '../config/cloudflare'
 
 export interface ArcticRegionViewerProps {
@@ -17,6 +18,8 @@ export const ArcticRegionViewer: React.FC<ArcticRegionViewerProps> = ({
 }) => {
   const [selectedAsset, setSelectedAsset] = useState<CloudflareAsset | null>(null)
   const [cameraMode, setCameraMode] = useState<'orbit' | 'follow'>('orbit')
+  const [showCameraInfo, setShowCameraInfo] = useState(false)
+  const [showCameraHelp, setShowCameraHelp] = useState(false)
 
   const handleAssetSelect = (asset: CloudflareAsset) => {
     setSelectedAsset(asset)
@@ -38,17 +41,31 @@ export const ArcticRegionViewer: React.FC<ArcticRegionViewerProps> = ({
             selectedAssetId={selectedAsset?.id}
             onAssetSelect={handleAssetSelect}
             cameraMode={cameraMode}
+            showCameraInfo={showCameraInfo}
           />
         </Suspense>
       </Canvas>
       
-      {/* Camera Mode Toggle */}
-      <div className="absolute top-4 right-4 z-10">
+      {/* Camera Controls */}
+      <div className="absolute top-4 right-4 z-10 flex space-x-2">
         <button
           onClick={() => setCameraMode(cameraMode === 'orbit' ? 'follow' : 'orbit')}
           className="bg-white/20 backdrop-blur-md rounded-lg px-4 py-2 text-white font-medium hover:bg-white/30 transition-colors"
         >
           {cameraMode === 'orbit' ? 'Follow Mode' : 'Orbit Mode'}
+        </button>
+        <button
+          onClick={() => setShowCameraInfo(!showCameraInfo)}
+          className="bg-white/20 backdrop-blur-md rounded-lg px-4 py-2 text-white font-medium hover:bg-white/30 transition-colors"
+        >
+          {showCameraInfo ? 'Hide Info' : 'Show Info'}
+        </button>
+        <button
+          onClick={() => setShowCameraHelp(true)}
+          className="bg-white/20 backdrop-blur-md rounded-lg px-4 py-2 text-white font-medium hover:bg-white/30 transition-colors"
+          title="Camera help"
+        >
+          ?
         </button>
       </div>
       
@@ -73,6 +90,14 @@ export const ArcticRegionViewer: React.FC<ArcticRegionViewerProps> = ({
           />
         </div>
       )}
+      
+
+      
+      {/* Camera Help Overlay */}
+      <CameraHelpOverlay 
+        show={showCameraHelp} 
+        onClose={() => setShowCameraHelp(false)} 
+      />
     </div>
   )
 } 

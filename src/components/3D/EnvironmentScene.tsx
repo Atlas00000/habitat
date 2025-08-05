@@ -8,6 +8,7 @@ import { CameraBounds } from './CameraBounds'
 import { CameraPositionIndicator } from './CameraPositionIndicator'
 import { LoadingSpinner } from './LoadingSpinner'
 import { getAssetsByCategory, CloudflareAsset } from '../../config/cloudflare'
+import { useModelPreloader } from '../../services/modelCache'
 
 interface EnvironmentSceneProps {
   category: string
@@ -82,6 +83,7 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
   const [loadingProgress, setLoadingProgress] = useState(0)
   const [hdrAsset, setHdrAsset] = useState<CloudflareAsset | null>(null)
   const { camera } = useThree()
+  const { preloadCategory, getCacheStats } = useModelPreloader()
 
   // Initialize camera position
   useEffect(() => {
@@ -97,6 +99,13 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
            setLoadingProgress(0.6)
            console.log('Category assets loaded:', categoryAssets.map(a => ({ id: a.id, name: a.name, type: a.type })))
            setAssets(categoryAssets)
+           
+           // Preload models for faster subsequent loads
+           preloadCategory(category).then(() => {
+             console.log('Model cache stats:', getCacheStats())
+           }).catch(error => {
+             console.warn('Failed to preload models:', error)
+           })
 
            // Find HDR asset for environment
            const hdr = categoryAssets.find(asset => asset.type === 'hdr')

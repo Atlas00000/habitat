@@ -10,4 +10,7 @@ export { FloatingDataPanel } from './FloatingDataPanel'
 export { SceneViewport } from './SceneViewport'
 
 // Legacy components (for backward compatibility)
-export { GLTFModel } from './gltf-model' 
+export { GLTFModel } from './gltf-model'
+
+// Cache components
+export { CacheStatusIndicator } from './3D/CacheStatusIndicator' 

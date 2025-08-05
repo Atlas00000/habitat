@@ -5,6 +5,7 @@ import { useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { CloudflareAsset } from '../../config/cloudflare'
 import { LoadingSpinner } from './LoadingSpinner'
+import { useModelPreloader } from '../../services/modelCache'
 import * as THREE from 'three'
 
 interface CloudflareModelProps {
@@ -39,6 +40,7 @@ function ModelComponent({
   const [animations, setAnimations] = useState<any[]>([])
   const [mixer, setMixer] = useState<any>(null)
   const groupRef = useRef<THREE.Group>(null)
+  const { isPreloaded, isLoading } = useModelPreloader()
 
   // Use proxy URL to avoid CORS issues
   const proxyUrl = `/api/proxy?url=${encodeURIComponent(asset.url)}`
@@ -109,6 +111,13 @@ function ModelComponent({
 
   if (!scene) {
     return null
+  }
+
+  // Show cache status in console for debugging
+  if (isPreloaded(asset)) {
+    console.log(`Model ${asset.name} loaded from cache`)
+  } else if (isLoading(asset)) {
+    console.log(`Model ${asset.name} is currently loading`)
   }
 
   // Adjust position based on asset type

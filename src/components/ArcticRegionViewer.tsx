@@ -3,8 +3,8 @@
 import React, { Suspense, useState, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { EnvironmentScene } from './3D/EnvironmentScene'
-import { FloatingDataPanel } from './FloatingDataPanel'
 import { CameraHelpOverlay } from './3D/CameraHelpOverlay'
+import { CacheStatusIndicator } from './3D/CacheStatusIndicator'
 import { CloudflareAsset } from '../config/cloudflare'
 
 export interface ArcticRegionViewerProps {
@@ -64,6 +64,23 @@ export const ArcticRegionViewer: React.FC<ArcticRegionViewerProps> = ({
         </Suspense>
       </Canvas>
       
+      {/* Cache Status Indicator (development only) */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="absolute top-4 left-4 z-20">
+          <CacheStatusIndicator 
+            asset={{
+              id: 'deer-model',
+              name: 'Deer',
+              type: 'model',
+              url: '',
+              category: 'forest',
+              metadata: {}
+            }} 
+            show={true} 
+          />
+        </div>
+      )}
+      
       {/* Camera Controls */}
       <div className="absolute top-4 right-4 z-10 flex space-x-2">
         <button
@@ -87,27 +104,7 @@ export const ArcticRegionViewer: React.FC<ArcticRegionViewerProps> = ({
         </button>
       </div>
       
-      {/* UI Overlay */}
-      {selectedAsset && (
-        <div className="absolute inset-0 pointer-events-none">
-          <FloatingDataPanel 
-            animal={{
-              name: selectedAsset.name,
-              scientificName: selectedAsset.metadata?.description || 'Unknown',
-              habitat: category,
-              diet: selectedAsset.metadata?.tags || [],
-              conservationStatus: 'Vulnerable' as const,
-              funFacts: [selectedAsset.metadata?.description || 'No description available'],
-              stats: {
-                weight: 'Unknown',
-                height: 'Unknown',
-                lifespan: 'Unknown',
-                speed: 'Unknown'
-              }
-            }} 
-          />
-        </div>
-      )}
+      {/* UI Overlay - Removed duplicate FloatingDataPanel */}
       
 
       

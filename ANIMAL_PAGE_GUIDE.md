@@ -40,6 +40,13 @@ The deer page has been enhanced to serve as a reference for other animals. It in
 - **Performance Controls**: Configurable settings for optimal experience
 - **Interactive Controls**: Camera help overlay and position indicators
 
+### **5. Performance Optimizations**
+- **Model Caching**: Preload models for faster subsequent loads
+- **Loading Spinners**: Immediate visual feedback during asset loading
+- **Shadow Optimization**: Reduced shadow map resolution for better FPS
+- **Error Handling**: Graceful fallbacks for failed asset loads
+- **Progress Tracking**: Detailed loading progress for large assets
+
 ---
 
 ## 🚀 **How to Create New Animal Pages**
@@ -255,6 +262,16 @@ Animal Data → AnimalPage → FloatingDataPanel → User Interface
 - **Shadow Management**: Configurable shadow casting and receiving
 - **Performance Settings**: Draw distance and effect controls
 - **Memory Efficiency**: Optimized model loading and caching
+- **Model Caching**: Preload models for faster subsequent loads
+- **Cache Priority**: High/medium/low priority for different assets
+- **Progressive Loading**: Load critical assets first, then details
+
+### **✅ Loading & Caching Optimizations**
+- **Loading Spinners**: Immediate visual feedback during asset loading
+- **Progress Tracking**: Detailed loading progress for large assets
+- **Error Retry**: Automatic retry mechanisms for failed loads
+- **Cache Status**: Development indicators for cache performance
+- **Asset Preloading**: Strategic preloading of critical models
 
 ---
 
@@ -283,6 +300,10 @@ Animal Data → AnimalPage → FloatingDataPanel → User Interface
 - **Fog**: Use sparingly for atmospheric effects
 - **Particles**: Limit for mobile performance
 - **Draw Distance**: 30-60 units based on scene size
+- **Model Caching**: Enable for faster subsequent loads
+- **Loading Spinners**: Enable for better UX
+- **Error Retry**: Enable for robust loading
+- **Progress Tracking**: Enable for large assets
 
 ---
 
@@ -323,6 +344,58 @@ import React from 'react'
 import { AnimalPage } from '../../../src/components/AnimalPage'
 import { lionData } from '../../../src/data/lion-data'
 import { AnimalPageConfig } from '../../../src/data/animal-template'
+
+// Optimized configuration with all performance features
+const lionConfig: AnimalPageConfig = {
+  animal: lionData,
+  category: "savanna",
+  environmentDescription: "Experience the African savanna with our majestic lion. This social predator demonstrates incredible hunting skills and pride dynamics.",
+  features: [
+    "Savanna environment with realistic grass",
+    "Enhanced lighting for African sun",
+    "Realistic lion with mane simulation",
+    "Scientific name: Panthera leo"
+  ],
+  backUrl: "/safari",
+  backLabel: "Back to Safari",
+  // Camera optimization settings
+  cameraSettings: {
+    initialPosition: [0, 4, 10],
+    targetPosition: [0, 1.2, 0],
+    minDistance: 5,
+    maxDistance: 18,
+    minY: 1.8,
+    maxY: 12
+  },
+  // Animation optimization settings
+  animationSettings: {
+    autoPlay: true,
+    loop: true,
+    animationSpeed: 1.2,
+    preferredAnimations: ["idle", "walk", "roar", "hunt"]
+  },
+  // Model optimization settings
+  modelSettings: {
+    position: [0, 0, 0],
+    scale: [1.1, 1.1, 1.1],
+    rotation: [0, 0, 0],
+    shadowCast: true,
+    shadowReceive: true,
+    preload: true,
+    cachePriority: 'high'
+  },
+  // Performance optimization settings
+  performanceSettings: {
+    enableShadows: true,
+    enableFog: false,
+    enableParticles: false,
+    maxDrawDistance: 60,
+    enableModelCaching: true,
+    enableLoadingSpinners: true,
+    enableErrorRetry: true,
+    enableProgressTracking: true
+  }
+}
 
 // Optimized configuration for lion
 const lionConfig: AnimalPageConfig = {

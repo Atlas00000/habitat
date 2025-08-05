@@ -48,6 +48,8 @@ export interface AnimalPageConfig {
     rotation?: [number, number, number]
     shadowCast?: boolean
     shadowReceive?: boolean
+    preload?: boolean // Whether to preload this model
+    cachePriority?: 'high' | 'medium' | 'low' // Cache priority
   }
   // Performance optimization settings
   performanceSettings?: {
@@ -55,6 +57,10 @@ export interface AnimalPageConfig {
     enableFog?: boolean
     enableParticles?: boolean
     maxDrawDistance?: number
+    enableModelCaching?: boolean
+    enableLoadingSpinners?: boolean
+    enableErrorRetry?: boolean
+    enableProgressTracking?: boolean
   }
 }
 
@@ -116,23 +122,29 @@ export const optimizedAnimalTemplate: AnimalPageConfig = {
   animationSettings: {
     autoPlay: true,
     loop: true,
-    animationSpeed: 1,
-    preferredAnimations: ["idle", "walk", "run"]
+    animationSpeed: 1.0,
+    preferredAnimations: ['idle', 'walk', 'run']
   },
   // Model optimization settings
   modelSettings: {
-    position: [0, 0, 0],
+    position: [0, 0.5, 0],
     scale: [1, 1, 1],
     rotation: [0, 0, 0],
     shadowCast: true,
-    shadowReceive: true
+    shadowReceive: true,
+    preload: true,
+    cachePriority: 'high'
   },
   // Performance optimization settings
   performanceSettings: {
     enableShadows: true,
     enableFog: false,
     enableParticles: false,
-    maxDrawDistance: 50
+    maxDrawDistance: 100,
+    enableModelCaching: true,
+    enableLoadingSpinners: true,
+    enableErrorRetry: true,
+    enableProgressTracking: true
   }
 }
 
@@ -201,13 +213,19 @@ export const optimizedPolarBearConfig: AnimalPageConfig = {
     scale: [1.2, 1.2, 1.2],
     rotation: [0, 0, 0],
     shadowCast: true,
-    shadowReceive: true
+    shadowReceive: true,
+    preload: true,
+    cachePriority: 'high'
   },
   performanceSettings: {
     enableShadows: true,
     enableFog: true,
     enableParticles: true,
-    maxDrawDistance: 40
+    maxDrawDistance: 40,
+    enableModelCaching: true,
+    enableLoadingSpinners: true,
+    enableErrorRetry: true,
+    enableProgressTracking: true
   }
 }
 
@@ -277,13 +295,19 @@ export const optimizedLionConfig: AnimalPageConfig = {
     scale: [1.1, 1.1, 1.1],
     rotation: [0, 0, 0],
     shadowCast: true,
-    shadowReceive: true
+    shadowReceive: true,
+    preload: true,
+    cachePriority: 'high'
   },
   performanceSettings: {
     enableShadows: true,
     enableFog: false,
     enableParticles: false,
-    maxDrawDistance: 60
+    maxDrawDistance: 60,
+    enableModelCaching: true,
+    enableLoadingSpinners: true,
+    enableErrorRetry: true,
+    enableProgressTracking: true
   }
 }
 
@@ -300,28 +324,51 @@ export const optimizedLionConfig: AnimalPageConfig = {
    - Configure distance limits based on model size
    - Adjust Y-axis bounds to prevent floor penetration
    - Test camera controls for smooth navigation
+   - Use CameraBounds component for automatic boundary enforcement
 
 3. ANIMATION OPTIMIZATION:
    - Enable autoPlay for immediate engagement
    - Set appropriate animation speed (0.5-1.5 range)
    - Configure loop behavior based on animation type
    - Specify preferred animations for better performance
+   - Use AnimationControls component for user interaction
 
 4. MODEL OPTIMIZATION:
    - Position models at appropriate height and scale
    - Enable shadows for realistic lighting
    - Set rotation for optimal viewing angle
    - Consider model complexity and performance impact
+   - Enable model preloading for faster subsequent loads
+   - Set appropriate cache priority (high/medium/low)
 
 5. PERFORMANCE OPTIMIZATION:
    - Enable shadows only when necessary
    - Use fog sparingly for atmospheric effects
    - Limit particle effects for mobile performance
    - Set appropriate draw distances
+   - Enable model caching for improved load times
+   - Use loading spinners for better UX
+   - Implement error retry mechanisms
+   - Add progress tracking for long loads
 
 6. USER EXPERIENCE:
    - Provide clear navigation with back buttons
    - Include descriptive environment text
    - List key features for user awareness
    - Ensure responsive design for all devices
+   - Add camera position indicators for debugging
+   - Include camera help overlay for new users
+
+7. LOADING & CACHING:
+   - Enable model preloading for critical assets
+   - Use cache status indicators in development
+   - Implement progressive loading for large models
+   - Add retry logic for failed asset loads
+   - Show loading progress for better user feedback
+
+8. ERROR HANDLING:
+   - Graceful fallbacks for missing assets
+   - Retry mechanisms for network failures
+   - User-friendly error messages
+   - Performance monitoring and logging
 */ 

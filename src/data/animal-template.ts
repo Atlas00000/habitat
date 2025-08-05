@@ -17,6 +17,47 @@ export interface Animal {
   image?: string
 }
 
+// Enhanced interface for animal pages with optimization features
+export interface AnimalPageConfig {
+  animal: Animal
+  category: string
+  environmentDescription: string
+  features: string[]
+  backUrl?: string
+  backLabel?: string
+  // Camera optimization settings
+  cameraSettings?: {
+    initialPosition?: [number, number, number]
+    targetPosition?: [number, number, number]
+    minDistance?: number
+    maxDistance?: number
+    minY?: number
+    maxY?: number
+  }
+  // Animation optimization settings
+  animationSettings?: {
+    autoPlay?: boolean
+    loop?: boolean
+    animationSpeed?: number
+    preferredAnimations?: string[]
+  }
+  // Model optimization settings
+  modelSettings?: {
+    position?: [number, number, number]
+    scale?: [number, number, number]
+    rotation?: [number, number, number]
+    shadowCast?: boolean
+    shadowReceive?: boolean
+  }
+  // Performance optimization settings
+  performanceSettings?: {
+    enableShadows?: boolean
+    enableFog?: boolean
+    enableParticles?: boolean
+    maxDrawDistance?: number
+  }
+}
+
 // Template for new animals - replace with actual data
 export const animalTemplate: Animal = {
   name: "Animal Name",
@@ -49,7 +90,53 @@ export const animalTemplate: Animal = {
   }
 }
 
-// Example: Polar Bear Template
+// Enhanced template with optimization settings
+export const optimizedAnimalTemplate: AnimalPageConfig = {
+  animal: animalTemplate,
+  category: "habitat-type",
+  environmentDescription: "Detailed description of the 3D environment and animal behavior",
+  features: [
+    "Feature 1: Environmental enhancement",
+    "Feature 2: Animal behavior simulation",
+    "Feature 3: Interactive elements",
+    "Feature 4: Educational content"
+  ],
+  backUrl: "/habitat",
+  backLabel: "Back to Habitat",
+  // Camera optimization settings
+  cameraSettings: {
+    initialPosition: [0, 5, 10],
+    targetPosition: [0, 1, 0],
+    minDistance: 3,
+    maxDistance: 15,
+    minY: 1.5,
+    maxY: 15
+  },
+  // Animation optimization settings
+  animationSettings: {
+    autoPlay: true,
+    loop: true,
+    animationSpeed: 1,
+    preferredAnimations: ["idle", "walk", "run"]
+  },
+  // Model optimization settings
+  modelSettings: {
+    position: [0, 0, 0],
+    scale: [1, 1, 1],
+    rotation: [0, 0, 0],
+    shadowCast: true,
+    shadowReceive: true
+  },
+  // Performance optimization settings
+  performanceSettings: {
+    enableShadows: true,
+    enableFog: false,
+    enableParticles: false,
+    maxDrawDistance: 50
+  }
+}
+
+// Example: Polar Bear Template with optimizations
 export const polarBearTemplate: Animal = {
   name: "Polar Bear",
   scientificName: "Ursus maritimus",
@@ -79,6 +166,48 @@ export const polarBearTemplate: Animal = {
     height: "6-9 feet when standing on hind legs",
     lifespan: "20-25 years in the wild",
     speed: "25 mph (40 km/h) on land, 6 mph (10 km/h) swimming"
+  }
+}
+
+// Optimized Polar Bear configuration
+export const optimizedPolarBearConfig: AnimalPageConfig = {
+  animal: polarBearTemplate,
+  category: "arctic",
+  environmentDescription: "Explore the harsh Arctic environment with our majestic polar bear. Experience the frozen landscape where this apex predator thrives in extreme conditions.",
+  features: [
+    "Arctic ice environment with realistic snow",
+    "Enhanced lighting for polar conditions",
+    "Realistic polar bear with fur simulation",
+    "Scientific name: Ursus maritimus"
+  ],
+  backUrl: "/arctic",
+  backLabel: "Back to Arctic",
+  cameraSettings: {
+    initialPosition: [0, 3, 8],
+    targetPosition: [0, 1.5, 0],
+    minDistance: 4,
+    maxDistance: 12,
+    minY: 2,
+    maxY: 10
+  },
+  animationSettings: {
+    autoPlay: true,
+    loop: true,
+    animationSpeed: 0.8,
+    preferredAnimations: ["idle", "walk", "swim"]
+  },
+  modelSettings: {
+    position: [0, 0, 0],
+    scale: [1.2, 1.2, 1.2],
+    rotation: [0, 0, 0],
+    shadowCast: true,
+    shadowReceive: true
+  },
+  performanceSettings: {
+    enableShadows: true,
+    enableFog: true,
+    enableParticles: true,
+    maxDrawDistance: 40
   }
 }
 
@@ -116,14 +245,83 @@ export const lionTemplate: Animal = {
   }
 }
 
-// Guidelines for creating animal data:
+// Optimized Lion configuration
+export const optimizedLionConfig: AnimalPageConfig = {
+  animal: lionTemplate,
+  category: "savanna",
+  environmentDescription: "Experience the African savanna with our majestic lion. This social predator demonstrates incredible hunting skills and pride dynamics.",
+  features: [
+    "Savanna environment with realistic grass",
+    "Enhanced lighting for African sun",
+    "Realistic lion with mane simulation",
+    "Scientific name: Panthera leo"
+  ],
+  backUrl: "/savanna",
+  backLabel: "Back to Savanna",
+  cameraSettings: {
+    initialPosition: [0, 4, 10],
+    targetPosition: [0, 1.2, 0],
+    minDistance: 5,
+    maxDistance: 18,
+    minY: 1.8,
+    maxY: 12
+  },
+  animationSettings: {
+    autoPlay: true,
+    loop: true,
+    animationSpeed: 1.2,
+    preferredAnimations: ["idle", "walk", "roar", "hunt"]
+  },
+  modelSettings: {
+    position: [0, 0, 0],
+    scale: [1.1, 1.1, 1.1],
+    rotation: [0, 0, 0],
+    shadowCast: true,
+    shadowReceive: true
+  },
+  performanceSettings: {
+    enableShadows: true,
+    enableFog: false,
+    enableParticles: false,
+    maxDrawDistance: 60
+  }
+}
+
+// Guidelines for creating optimized animal pages:
 /*
-1. NAME: Use common name (e.g., "White-tailed Deer" not just "Deer")
-2. SCIENTIFIC NAME: Use proper binomial nomenclature (Genus species)
-3. HABITAT: Include geographic range and specific habitat types
-4. DIET: List from most important to least important food sources
-5. CONSERVATION STATUS: Use IUCN Red List categories
-6. FUN FACTS: Include 6-8 interesting, educational facts
-7. STATS: Be specific with measurements and include context
-8. CONSISTENCY: Use metric and imperial units where appropriate
+1. DATA QUALITY:
+   - Use accurate scientific names and conservation status
+   - Include comprehensive habitat and diet information
+   - Provide engaging, educational fun facts
+   - Use specific measurements with context
+
+2. CAMERA OPTIMIZATION:
+   - Set appropriate initial camera position for best view
+   - Configure distance limits based on model size
+   - Adjust Y-axis bounds to prevent floor penetration
+   - Test camera controls for smooth navigation
+
+3. ANIMATION OPTIMIZATION:
+   - Enable autoPlay for immediate engagement
+   - Set appropriate animation speed (0.5-1.5 range)
+   - Configure loop behavior based on animation type
+   - Specify preferred animations for better performance
+
+4. MODEL OPTIMIZATION:
+   - Position models at appropriate height and scale
+   - Enable shadows for realistic lighting
+   - Set rotation for optimal viewing angle
+   - Consider model complexity and performance impact
+
+5. PERFORMANCE OPTIMIZATION:
+   - Enable shadows only when necessary
+   - Use fog sparingly for atmospheric effects
+   - Limit particle effects for mobile performance
+   - Set appropriate draw distances
+
+6. USER EXPERIENCE:
+   - Provide clear navigation with back buttons
+   - Include descriptive environment text
+   - List key features for user awareness
+   - Ensure responsive design for all devices
 */ 

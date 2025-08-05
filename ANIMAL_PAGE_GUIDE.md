@@ -9,6 +9,9 @@ The deer page has been enhanced to serve as a reference for other animals. It in
 - ✅ **Reusable components** for consistent design
 - ✅ **Enhanced user experience** with interactive features
 - ✅ **Template system** for easy replication
+- ✅ **Camera optimization** with bounds and controls
+- ✅ **Animation support** for GLB model animations
+- ✅ **Performance optimizations** for smooth 60fps experience
 
 ---
 
@@ -31,6 +34,12 @@ The deer page has been enhanced to serve as a reference for other animals. It in
 - **Example Templates**: Polar bear and lion examples included
 - **Guidelines**: Clear instructions for creating new animal data
 
+### **4. Camera & Animation Optimizations**
+- **Camera Bounds**: Prevents users from going under floor or out of view
+- **Animation Support**: Automatic GLB animation detection and playback
+- **Performance Controls**: Configurable settings for optimal experience
+- **Interactive Controls**: Camera help overlay and position indicators
+
 ---
 
 ## 🚀 **How to Create New Animal Pages**
@@ -40,7 +49,7 @@ The deer page has been enhanced to serve as a reference for other animals. It in
 Create a new file in `src/data/` (e.g., `polar-bear-data.ts`):
 
 ```typescript
-import { Animal } from './deer-data'
+import { Animal, AnimalPageConfig } from './animal-template'
 
 export const polarBearData: Animal = {
   name: "Polar Bear",
@@ -75,9 +84,9 @@ export const polarBearData: Animal = {
 }
 ```
 
-### **Step 2: Create Animal Page**
+### **Step 2: Create Optimized Animal Page**
 
-Create a new page in `app/arctic/polar-bear/page.tsx`:
+Create a new page in `app/arctic/polar-bear/page.tsx` with optimization settings:
 
 ```typescript
 "use client"
@@ -86,22 +95,54 @@ import React from 'react'
 import { AnimalPage } from '../../../src/components/AnimalPage'
 import { polarBearData } from '../../../src/data/polar-bear-data'
 
+// Optimized configuration for polar bear
+const polarBearConfig: AnimalPageConfig = {
+  animal: polarBearData,
+  category: "arctic",
+  environmentDescription: "Explore the harsh Arctic environment with our magnificent polar bear. This apex predator is perfectly adapted to survive in one of the most extreme environments on Earth, with thick fur, black skin for heat absorption, and incredible swimming abilities.",
+  features: [
+    "Arctic ice environment with snow and glaciers",
+    "Enhanced polar landscape with realistic lighting",
+    "Realistic polar bear with detailed fur and proportions",
+    "Scientific name: Ursus maritimus"
+  ],
+  backUrl: "/arctic",
+  backLabel: "Back to Arctic",
+  // Camera optimization settings
+  cameraSettings: {
+    initialPosition: [0, 3, 8],
+    targetPosition: [0, 1.5, 0],
+    minDistance: 4,
+    maxDistance: 12,
+    minY: 2,
+    maxY: 10
+  },
+  // Animation optimization settings
+  animationSettings: {
+    autoPlay: true,
+    loop: true,
+    animationSpeed: 0.8,
+    preferredAnimations: ["idle", "walk", "swim"]
+  },
+  // Model optimization settings
+  modelSettings: {
+    position: [0, 0, 0],
+    scale: [1.2, 1.2, 1.2],
+    rotation: [0, 0, 0],
+    shadowCast: true,
+    shadowReceive: true
+  },
+  // Performance optimization settings
+  performanceSettings: {
+    enableShadows: true,
+    enableFog: true,
+    enableParticles: true,
+    maxDrawDistance: 40
+  }
+}
+
 export default function PolarBearPage() {
-  return (
-    <AnimalPage
-      animal={polarBearData}
-      category="arctic"
-      environmentDescription="Explore the harsh Arctic environment with our magnificent polar bear. This apex predator is perfectly adapted to survive in one of the most extreme environments on Earth, with thick fur, black skin for heat absorption, and incredible swimming abilities."
-      features={[
-        "Arctic ice environment with snow and glaciers",
-        "Enhanced polar landscape with realistic lighting",
-        "Realistic polar bear with detailed fur and proportions",
-        "Scientific name: Ursus maritimus"
-      ]}
-      backUrl="/arctic"
-      backLabel="Back to Arctic"
-    />
-  )
+  return <AnimalPage {...polarBearConfig} />
 }
 ```
 
@@ -195,6 +236,54 @@ Animal Data → AnimalPage → FloatingDataPanel → User Interface
 - **Smooth Interactions**: Responsive animations
 - **Error Handling**: Graceful fallbacks
 
+### **✅ Camera Optimizations**
+- **Bounds Enforcement**: Prevents users from going under floor or out of view
+- **Smooth Controls**: Damped camera movement for natural feel
+- **Distance Limits**: Configurable min/max zoom distances
+- **Height Restrictions**: Prevents camera from going too high or low
+- **Interactive Help**: Camera controls guide and position indicators
+
+### **✅ Animation Optimizations**
+- **Automatic Detection**: GLB animations are automatically detected and played
+- **Performance Controls**: Configurable animation speed and looping
+- **Memory Management**: Proper cleanup of animation resources
+- **Real-time Updates**: 60fps animation playback using useFrame
+- **Error Handling**: Graceful fallback when animations fail to load
+
+### **✅ Model Optimizations**
+- **Position Control**: Precise model placement and scaling
+- **Shadow Management**: Configurable shadow casting and receiving
+- **Performance Settings**: Draw distance and effect controls
+- **Memory Efficiency**: Optimized model loading and caching
+
+---
+
+## 🎯 **Optimization Guidelines**
+
+### **📊 Camera Settings Best Practices**
+- **Initial Position**: Set for best first impression of the animal
+- **Distance Limits**: Base on model size (small animals: 3-8, large: 4-15)
+- **Height Bounds**: Prevent floor penetration (minY: 1.5-2.5)
+- **Target Position**: Focus on animal's center of mass
+
+### **🎬 Animation Settings Best Practices**
+- **AutoPlay**: Enable for immediate engagement
+- **Animation Speed**: 0.5-1.5 range (0.8 for natural movement)
+- **Loop Behavior**: Enable for continuous animations
+- **Preferred Animations**: Specify main animations for performance
+
+### **🎨 Model Settings Best Practices**
+- **Scale**: Adjust based on model size (0.8-1.5 range)
+- **Position**: Center on ground level (Y: 0-0.5)
+- **Shadows**: Enable for realistic lighting
+- **Rotation**: Align with camera view
+
+### **⚡ Performance Settings Best Practices**
+- **Shadows**: Enable for realism, disable for performance
+- **Fog**: Use sparingly for atmospheric effects
+- **Particles**: Limit for mobile performance
+- **Draw Distance**: 30-60 units based on scene size
+
 ---
 
 ## 🎯 **Example: Complete Lion Page**
@@ -226,30 +315,63 @@ export const lionData: Animal = {
 }
 ```
 
-### **Page File** (`app/safari/lion/page.tsx`)
+### **Optimized Page File** (`app/safari/lion/page.tsx`)
 ```typescript
 "use client"
 
 import React from 'react'
 import { AnimalPage } from '../../../src/components/AnimalPage'
 import { lionData } from '../../../src/data/lion-data'
+import { AnimalPageConfig } from '../../../src/data/animal-template'
+
+// Optimized configuration for lion
+const lionConfig: AnimalPageConfig = {
+  animal: lionData,
+  category: "safari",
+  environmentDescription: "Experience the African savanna with our majestic African lion. This apex predator rules the grasslands with its powerful build, social pride structure, and impressive hunting abilities.",
+  features: [
+    "African savanna environment with grasslands",
+    "Enhanced safari landscape with realistic lighting",
+    "Realistic lion with detailed mane and proportions",
+    "Scientific name: Panthera leo"
+  ],
+  backUrl: "/safari",
+  backLabel: "Back to Safari",
+  // Camera optimization settings
+  cameraSettings: {
+    initialPosition: [0, 4, 10],
+    targetPosition: [0, 1.2, 0],
+    minDistance: 5,
+    maxDistance: 18,
+    minY: 1.8,
+    maxY: 12
+  },
+  // Animation optimization settings
+  animationSettings: {
+    autoPlay: true,
+    loop: true,
+    animationSpeed: 1.2,
+    preferredAnimations: ["idle", "walk", "roar", "hunt"]
+  },
+  // Model optimization settings
+  modelSettings: {
+    position: [0, 0, 0],
+    scale: [1.1, 1.1, 1.1],
+    rotation: [0, 0, 0],
+    shadowCast: true,
+    shadowReceive: true
+  },
+  // Performance optimization settings
+  performanceSettings: {
+    enableShadows: true,
+    enableFog: false,
+    enableParticles: false,
+    maxDrawDistance: 60
+  }
+}
 
 export default function LionPage() {
-  return (
-    <AnimalPage
-      animal={lionData}
-      category="safari"
-      environmentDescription="Experience the African savanna with our majestic African lion. This apex predator rules the grasslands with its powerful build, social pride structure, and impressive hunting abilities."
-      features={[
-        "African savanna environment with grasslands",
-        "Enhanced safari landscape with realistic lighting",
-        "Realistic lion with detailed mane and proportions",
-        "Scientific name: Panthera leo"
-      ]}
-      backUrl="/safari"
-      backLabel="Back to Safari"
-    />
-  )
+  return <AnimalPage {...lionConfig} />
 }
 ```
 

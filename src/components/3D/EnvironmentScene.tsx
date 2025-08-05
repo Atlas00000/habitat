@@ -6,6 +6,7 @@ import { OrbitControls, Environment, Sky, useTexture } from '@react-three/drei'
 import { CloudflareModel } from './CloudflareModel'
 import { CameraBounds } from './CameraBounds'
 import { CameraPositionIndicator } from './CameraPositionIndicator'
+import { LoadingSpinner } from './LoadingSpinner'
 import { getAssetsByCategory, CloudflareAsset } from '../../config/cloudflare'
 
 interface EnvironmentSceneProps {
@@ -76,6 +77,7 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
 }) => {
   const [assets, setAssets] = useState<CloudflareAsset[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [loadingProgress, setLoadingProgress] = useState(0)
   const [hdrAsset, setHdrAsset] = useState<CloudflareAsset | null>(null)
   const { camera } = useThree()
 
@@ -88,15 +90,19 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
   }, [camera, cameraMode])
 
            useEffect(() => {
+           setLoadingProgress(0.2)
            const categoryAssets = getAssetsByCategory(category)
+           setLoadingProgress(0.6)
            console.log('Category assets loaded:', categoryAssets.map(a => ({ id: a.id, name: a.name, type: a.type })))
            setAssets(categoryAssets)
 
            // Find HDR asset for environment
            const hdr = categoryAssets.find(asset => asset.type === 'hdr')
            setHdrAsset(hdr || null)
+           setLoadingProgress(0.9)
 
            setIsLoading(false)
+           setLoadingProgress(1)
            onSceneReady?.()
          }, [category, onSceneReady])
 
@@ -157,6 +163,17 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
 
   return (
     <>
+      {/* Loading State */}
+      {isLoading && (
+        <group position={[0, 2, 0]}>
+          <LoadingSpinner 
+            size={1.5} 
+            color="#3B82F6" 
+            message={`Loading ${category} environment...`} 
+          />
+        </group>
+      )}
+      
       {/* Lighting */}
       <ambientLight intensity={0.4} />
       <directionalLight

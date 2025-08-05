@@ -20,6 +20,7 @@ export const ArcticRegionViewer: React.FC<ArcticRegionViewerProps> = ({
   const [cameraMode, setCameraMode] = useState<'orbit' | 'follow'>('orbit')
   const [showCameraInfo, setShowCameraInfo] = useState(false)
   const [showCameraHelp, setShowCameraHelp] = useState(false)
+  const [isSceneLoading, setIsSceneLoading] = useState(true)
 
   const handleAssetSelect = (asset: CloudflareAsset) => {
     setSelectedAsset(asset)
@@ -42,6 +43,7 @@ export const ArcticRegionViewer: React.FC<ArcticRegionViewerProps> = ({
             onAssetSelect={handleAssetSelect}
             cameraMode={cameraMode}
             showCameraInfo={showCameraInfo}
+            onSceneReady={() => setIsSceneLoading(false)}
           />
         </Suspense>
       </Canvas>
@@ -92,6 +94,16 @@ export const ArcticRegionViewer: React.FC<ArcticRegionViewerProps> = ({
       )}
       
 
+      
+      {/* Loading Overlay */}
+      {isSceneLoading && (
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white/90 rounded-lg p-6 text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+            <p className="text-gray-700">Loading {category} environment...</p>
+          </div>
+        </div>
+      )}
       
       {/* Camera Help Overlay */}
       <CameraHelpOverlay 

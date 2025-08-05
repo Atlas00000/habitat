@@ -4,6 +4,7 @@ import React, { Suspense, useState, useEffect, useRef } from 'react'
 import { useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { CloudflareAsset } from '../../config/cloudflare'
+import { LoadingSpinner } from './LoadingSpinner'
 import * as THREE from 'three'
 
 interface CloudflareModelProps {
@@ -159,7 +160,7 @@ function ModelComponent({
 
 export const CloudflareModel: React.FC<CloudflareModelProps> = (props) => {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<LoadingSpinner size={1} color="#3B82F6" message={`Loading ${props.asset.name}...`} />}>
       <ModelComponent {...props} />
     </Suspense>
   )

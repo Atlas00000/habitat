@@ -38,7 +38,7 @@ export const AnimalPage: React.FC<AnimalPageProps> = ({
   return (
     <main className="w-full h-screen bg-gradient-to-br from-green-50 to-blue-100">
       <div className="w-full h-full relative">
-        <ArcticRegionViewer category={category} />
+        <ArcticRegionViewer category={category} selectedAnimal={animal} />
         
         {/* Enhanced Animal-specific overlay */}
         <div className="absolute top-4 left-4 z-20 bg-white/95 backdrop-blur-md rounded-xl p-6 max-w-md shadow-2xl border border-white/30">

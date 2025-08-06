@@ -1,7 +1,7 @@
 "use client"
 
 import { useFrame, useThree } from '@react-three/fiber'
-import { useEffect } from 'react'
+import { Vector3 } from 'three'
 
 interface CameraBoundsProps {
   minY?: number
@@ -21,16 +21,19 @@ export const CameraBounds: React.FC<CameraBoundsProps> = ({
   const { camera } = useThree()
 
   useFrame(() => {
+    // Convert target array to Vector3
+    const targetVector = new Vector3(target[0], target[1], target[2])
+    
     // Calculate distance from target
-    const distance = camera.position.distanceTo(camera.getWorldDirection(camera.position.clone().sub(target)))
+    const distance = camera.position.distanceTo(targetVector)
     
     // Enforce minimum and maximum distance
     if (distance < minDistance) {
-      const direction = camera.position.clone().sub(target).normalize()
-      camera.position.copy(target.clone().add(direction.multiplyScalar(minDistance)))
+      const direction = camera.position.clone().sub(targetVector).normalize()
+      camera.position.copy(targetVector.clone().add(direction.multiplyScalar(minDistance)))
     } else if (distance > maxDistance) {
-      const direction = camera.position.clone().sub(target).normalize()
-      camera.position.copy(target.clone().add(direction.multiplyScalar(maxDistance)))
+      const direction = camera.position.clone().sub(targetVector).normalize()
+      camera.position.copy(targetVector.clone().add(direction.multiplyScalar(maxDistance)))
     }
     
     // Enforce Y bounds (prevent going under floor)
@@ -41,7 +44,7 @@ export const CameraBounds: React.FC<CameraBoundsProps> = ({
     }
     
     // Ensure camera always looks at target
-    camera.lookAt(target[0], target[1], target[2])
+    camera.lookAt(targetVector)
   })
 
   return null

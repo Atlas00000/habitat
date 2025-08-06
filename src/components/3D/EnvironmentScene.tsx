@@ -18,6 +18,7 @@ interface EnvironmentSceneProps {
   onSceneReady?: () => void
   showCameraInfo?: boolean
   enableShadows?: boolean
+  selectedAnimal?: any
 }
 
 // Camera Controller Component with enhanced floor protection
@@ -76,7 +77,8 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
   cameraMode = 'orbit',
   onSceneReady,
   showCameraInfo = false,
-  enableShadows = true
+  enableShadows = true,
+  selectedAnimal
 }) => {
   const [assets, setAssets] = useState<CloudflareAsset[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -102,13 +104,41 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
            setLoadingProgress(0.6)
            console.log('Category assets loaded:', categoryAssets.map(a => ({ id: a.id, name: a.name, type: a.type })))
            
+           // Filter assets based on selected animal
+           let filteredAssets = categoryAssets
+           if (selectedAnimal) {
+             const animalName = selectedAnimal.name.toLowerCase()
+             
+             // Filter to only include assets that match the selected animal
+             filteredAssets = categoryAssets.filter(asset => {
+               // Always include HDR and landscape assets
+               if (asset.type === 'hdr' || asset.metadata?.tags?.includes('landscape')) {
+                 return true
+               }
+               
+               // For model assets, only include the specific animal
+               if (asset.type === 'model') {
+                 const assetName = asset.name.toLowerCase()
+                 const assetTags = asset.metadata?.tags || []
+                 
+                 // Include if the asset name or tags match the animal
+                 return assetName.includes(animalName) || 
+                        assetTags.some(tag => animalName.includes(tag) || tag.includes(animalName))
+               }
+               
+               return false
+             })
+             
+             console.log('Filtered assets for', selectedAnimal.name, ':', filteredAssets.map(a => ({ id: a.id, name: a.name, type: a.type })))
+           }
+           
            // Preload models for this category
            preloadCategory(category)
            setLoadingProgress(0.9)
            
            // Set assets and HDR
-           const modelAssets = categoryAssets.filter(asset => asset.type === 'model')
-           const hdrAsset = categoryAssets.find(asset => asset.type === 'hdr')
+           const modelAssets = filteredAssets.filter(asset => asset.type === 'model')
+           const hdrAsset = filteredAssets.find(asset => asset.type === 'hdr')
            
            setAssets(modelAssets)
            setHdrAsset(hdrAsset || null)
@@ -123,7 +153,7 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
            if (onSceneReady) {
              onSceneReady()
            }
-           }, [category, preloadCategory, getCacheStats, onSceneReady])
+           }, [category, selectedAnimal, preloadCategory, getCacheStats, onSceneReady])
 
   const handleAssetClick = (asset: CloudflareAsset) => {
     onAssetSelect?.(asset)
@@ -199,8 +229,8 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
         position={[10, 10, 5]}
         intensity={1}
         castShadow={enableShadows}
-        shadow-mapSize-width={enableShadows ? 1024 : 512}
-        shadow-mapSize-height={enableShadows ? 1024 : 512}
+        shadow-mapSize-width={enableShadows ? 512 : 256}
+        shadow-mapSize-height={enableShadows ? 512 : 256}
         shadow-camera-far={50}
         shadow-camera-left={-25}
         shadow-camera-right={25}
@@ -238,7 +268,7 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
                    renderedAssets.current.add(asset.id)
                  }
                  
-                 // Position deer above the landscape
+                 // Position animals and landscapes appropriately
                  let position: [number, number, number] = [0, 0, 0]
                  let scale: [number, number, number] = [1, 1, 1]
                  
@@ -249,7 +279,14 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
                      console.log('Deer positioned at:', position)
                      loggedPositions.current.add(asset.id)
                    }
-                 } else if (asset.id === 'forest2-landscape') {
+                 } else if (asset.id === 'black-bear-model') {
+                   position = [0, 0.8, 0] // Position bear higher to avoid landscape overlap
+                   scale = [1.2, 1.2, 1.2] // Appropriate scale for bear
+                   if (!loggedPositions.current.has(asset.id)) {
+                     console.log('Black Bear positioned at:', position)
+                     loggedPositions.current.add(asset.id)
+                   }
+                 } else if (asset.id === 'forest2-landscape' || asset.id === 'forest2-landscape-bear') {
                    position = [0, 0, 0] // Keep landscape at ground level
                    scale = [1, 1, 1]
                    if (!loggedPositions.current.has(asset.id)) {
@@ -272,10 +309,10 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
                          loggedAnimations.current.add(asset.id)
                        }
                      }}
-                     // Animation settings for deer
-                     autoPlay={asset.id === 'deer-model'}
-                     loop={asset.id === 'deer-model'}
-                     animationSpeed={asset.id === 'deer-model' ? 0.8 : 1.0}
+                     // Animation settings for animals
+                     autoPlay={asset.id === 'deer-model' || asset.id === 'black-bear-model'}
+                     loop={asset.id === 'deer-model' || asset.id === 'black-bear-model'}
+                     animationSpeed={asset.id === 'deer-model' ? 0.8 : asset.id === 'black-bear-model' ? 0.4 : 1.0}
                    />
                  )
                })}

@@ -56,7 +56,7 @@ function ModelComponent({
         
         // Setup animations if available
         if (modelAnimations && modelAnimations.length > 0) {
-          console.log(`Found ${modelAnimations.length} animations for ${asset.name}:`, modelAnimations.map(a => a.name))
+          console.log(`Found ${modelAnimations.length} animations for ${asset.name} (${asset.id}):`, modelAnimations.map(a => a.name))
           setAnimations(modelAnimations)
           
           // Notify parent about available animations
@@ -67,22 +67,41 @@ function ModelComponent({
           const newMixer = new AnimationMixer(scene)
           setMixer(newMixer)
           
-          // Play all animations
-          modelAnimations.forEach((clip) => {
-            const action = newMixer.clipAction(clip)
-            if (autoPlay) {
-              console.log(`Setting up animation for ${asset.name}:`, {
-                clipName: clip.name,
-                loop: loop,
-                speed: animationSpeed,
-                duration: clip.duration
-              })
+          // Play specific animations for black bear
+          if (asset.id === 'black-bear-model') {
+            // Look for bear_idle_smell animation
+            const bearIdleSmell = modelAnimations.find(clip => 
+              clip.name.toLowerCase().includes('bear_idle_smell') || 
+              clip.name.toLowerCase().includes('idle_smell') ||
+              clip.name.toLowerCase().includes('smell')
+            )
+            
+            if (bearIdleSmell) {
+              const action = newMixer.clipAction(bearIdleSmell)
               action.setLoop(loop ? THREE.LoopRepeat : THREE.LoopOnce, 0)
               action.setEffectiveTimeScale(animationSpeed)
               action.play()
-              console.log(`Animation started for ${asset.name}`)
+            } else {
+              // Fallback to first animation if bear_idle_smell not found
+              const firstClip = modelAnimations[0]
+              if (firstClip) {
+                const action = newMixer.clipAction(firstClip)
+                action.setLoop(loop ? THREE.LoopRepeat : THREE.LoopOnce, 0)
+                action.setEffectiveTimeScale(animationSpeed)
+                action.play()
+              }
             }
-          })
+          } else {
+            // Play all animations for other models
+            modelAnimations.forEach((clip) => {
+              const action = newMixer.clipAction(clip)
+              if (autoPlay) {
+                action.setLoop(loop ? THREE.LoopRepeat : THREE.LoopOnce, 0)
+                action.setEffectiveTimeScale(animationSpeed)
+                action.play()
+              }
+            })
+          }
         }
       }
     }
@@ -93,11 +112,9 @@ function ModelComponent({
   // Update animation mixer on each frame
   useFrame((state, delta) => {
     if (mixer) {
-      mixer.update(delta * animationSpeed)
-      // Debug: Log animation progress occasionally
-      if (Math.random() < 0.01) { // 1% chance to log
-        console.log(`Animation mixer updating for ${asset.name}, delta:`, delta)
-      }
+      // Cap delta to prevent large jumps
+      const cappedDelta = Math.min(delta, 0.1)
+      mixer.update(cappedDelta * animationSpeed)
     }
   })
 

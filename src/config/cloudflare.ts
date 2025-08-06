@@ -67,13 +67,13 @@ export const ASSET_COLLECTIONS: Record<string, AssetCollection> = {
 
       {
         id: 'deer-model',
-        name: 'Deer',
+        name: 'White-tailed Deer',
         url: 'https://pub-fdb254222c8f4a71bed4b3dd7a1d8ba1.r2.dev/deer.glb',
         type: 'model',
         category: 'forest',
         metadata: {
           description: 'Realistic deer 3D model with antlers',
-          tags: ['animal', 'deer', 'forest', 'herbivore', 'mammal'],
+          tags: ['animal', 'deer', 'forest', 'herbivore', 'mammal', 'white-tailed-deer'],
           size: 0
         }
       },
@@ -98,6 +98,43 @@ export const ASSET_COLLECTIONS: Record<string, AssetCollection> = {
         metadata: {
           description: 'Night atmosphere with lakeside environment',
           tags: ['environment', 'hdr', 'night', 'lakeside', 'lighting'],
+          size: 0
+        }
+      },
+      // Black Bear Assets
+      {
+        id: 'black-bear-model',
+        name: 'American Black Bear',
+        url: 'https://pub-fdb254222c8f4a71bed4b3dd7a1d8ba1.r2.dev/black_bear.glb',
+        type: 'model',
+        category: 'forest',
+        metadata: {
+          description: 'Realistic black bear 3D model with animations',
+          tags: ['animal', 'bear', 'forest', 'omnivore', 'mammal', 'predator', 'black-bear'],
+          size: 0
+        }
+      },
+      {
+        id: 'forest2-landscape-bear',
+        name: 'Forest Landscape for Bear',
+        url: 'https://pub-fdb254222c8f4a71bed4b3dd7a1d8ba1.r2.dev/forest2.glb',
+        type: 'model',
+        category: 'forest',
+        metadata: {
+          description: 'Enhanced forest landscape environment for black bear habitat',
+          tags: ['environment', 'forest', 'landscape', 'vegetation', 'bear-habitat'],
+          size: 0
+        }
+      },
+      {
+        id: 'lakeside-night-hdr-bear',
+        name: 'Lakeside Night HDR for Bear',
+        url: 'https://pub-fdb254222c8f4a71bed4b3dd7a1d8ba1.r2.dev/lakeside_night.hdr',
+        type: 'hdr',
+        category: 'forest',
+        metadata: {
+          description: 'Night atmosphere with lakeside environment for black bear',
+          tags: ['environment', 'hdr', 'night', 'lakeside', 'lighting', 'bear-habitat'],
           size: 0
         }
       }

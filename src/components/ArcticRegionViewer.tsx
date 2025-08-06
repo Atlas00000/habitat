@@ -5,6 +5,7 @@ import { Canvas } from '@react-three/fiber'
 import { EnvironmentScene } from './3D/EnvironmentScene'
 import { CameraHelpOverlay } from './3D/CameraHelpOverlay'
 import { CacheStatusIndicator } from './3D/CacheStatusIndicator'
+import { DevelopmentIndicator } from './3D/DevelopmentIndicator'
 import { CloudflareAsset } from '../config/cloudflare'
 
 export interface ArcticRegionViewerProps {
@@ -66,6 +67,9 @@ export const ArcticRegionViewer: React.FC<ArcticRegionViewerProps> = ({
           />
         </Suspense>
       </Canvas>
+      
+      {/* Development Indicator */}
+      <DevelopmentIndicator />
       
       {/* Cache Status Indicator (development only) */}
       {process.env.NODE_ENV === 'development' && (

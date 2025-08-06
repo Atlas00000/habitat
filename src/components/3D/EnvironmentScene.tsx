@@ -32,20 +32,30 @@ function CameraController({ selectedAnimal }: { selectedAnimal?: any }) {
     if (selectedAnimal) {
       const animalName = selectedAnimal.name.toLowerCase()
       
-      if (animalName.includes('deer')) {
-        targetPosition.current = [0, 1.5, 4] // Closer to deer
-        currentPosition.current = [0, 1.5, 4]
-      } else if (animalName.includes('bear')) {
-        targetPosition.current = [0, 2, 5] // Slightly further for bear
-        currentPosition.current = [0, 2, 5]
-      } else if (animalName.includes('jaguar')) {
-        targetPosition.current = [0, 1.8, 4.5] // Medium distance for jaguar
-        currentPosition.current = [0, 1.8, 4.5]
-      } else {
-        // Default position for other animals
-        targetPosition.current = [0, 2, 6]
-        currentPosition.current = [0, 2, 6]
-      }
+             if (animalName.includes('deer')) {
+         targetPosition.current = [0, 1.5, 4] // Closer to deer
+         currentPosition.current = [0, 1.5, 4]
+       } else if (animalName.includes('bear')) {
+         targetPosition.current = [0, 2, 5] // Slightly further for bear
+         currentPosition.current = [0, 2, 5]
+       } else if (animalName.includes('jaguar')) {
+         targetPosition.current = [0, 1.8, 4.5] // Medium distance for jaguar
+         currentPosition.current = [0, 1.8, 4.5]
+               } else if (animalName.includes('raccoon')) {
+          targetPosition.current = [0, 1.2, 3.5] // Close view for raccoon
+          currentPosition.current = [0, 1.2, 3.5]
+        } else if (animalName.includes('fox')) {
+          targetPosition.current = [0, 1.0, 3.0] // Close view for fox
+          currentPosition.current = [0, 1.0, 3.0]
+        } else if (animalName.includes('polar bear')) {
+          targetPosition.current = [0, 2.5, 6.0] // Good view for polar bear
+          currentPosition.current = [0, 2.5, 6.0]
+
+        } else {
+          // Default position for other animals
+          targetPosition.current = [0, 2, 6]
+          currentPosition.current = [0, 2, 6]
+        }
       
       // Set initial camera position
       camera.position.set(...targetPosition.current)
@@ -120,15 +130,22 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
       if (selectedAnimal) {
         const animalName = selectedAnimal.name.toLowerCase()
         
-        if (animalName.includes('deer')) {
-          camera.position.set(0, 1.5, 4)
-        } else if (animalName.includes('bear')) {
-          camera.position.set(0, 2, 5)
-        } else if (animalName.includes('jaguar')) {
-          camera.position.set(0, 1.8, 4.5)
-        } else {
-          camera.position.set(0, 2, 6)
-        }
+                 if (animalName.includes('deer')) {
+           camera.position.set(0, 1.5, 4)
+         } else if (animalName.includes('bear')) {
+           camera.position.set(0, 2, 5)
+         } else if (animalName.includes('jaguar')) {
+           camera.position.set(0, 1.8, 4.5)
+         } else if (animalName.includes('raccoon')) {
+           camera.position.set(0, 1.2, 3.5)
+         } else if (animalName.includes('fox')) {
+           camera.position.set(0, 1.0, 3.0)
+         } else if (animalName.includes('polar bear')) {
+           camera.position.set(0, 2.5, 6.0)
+
+         } else {
+           camera.position.set(0, 2, 6)
+         }
       } else {
         camera.position.set(0, 2, 6)
       }
@@ -140,7 +157,10 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
            setLoadingProgress(0.2)
            const categoryAssets = getAssetsByCategory(category)
            setLoadingProgress(0.6)
-           console.log('Category assets loaded:', categoryAssets.map(a => ({ id: a.id, name: a.name, type: a.type })))
+           // Only log in development and when not on specific animal page
+           if (process.env.NODE_ENV === 'development' && !selectedAnimal) {
+             console.log('Category assets loaded:', categoryAssets.map(a => ({ id: a.id, name: a.name, type: a.type })))
+           }
            
            // Filter assets based on selected animal
            let filteredAssets = categoryAssets
@@ -149,29 +169,40 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
              
              // Filter to only include assets that match the selected animal
              filteredAssets = categoryAssets.filter(asset => {
-               // Always include HDR and landscape assets
-               if (asset.type === 'hdr' || asset.metadata?.tags?.includes('landscape')) {
+               // Include HDR assets
+               if (asset.type === 'hdr') {
                  return true
+               }
+               
+               // For landscape assets, only include the specific animal's landscape
+               if (asset.type === 'model' && asset.metadata?.tags?.includes('landscape')) {
+                 const assetId = asset.id.toLowerCase()
+                 return assetId.includes(animalName) || assetId === 'forest2-landscape'
                }
                
                // For model assets, only include the specific animal
                if (asset.type === 'model') {
                  const assetName = asset.name.toLowerCase()
+                 const assetId = asset.id.toLowerCase()
                  const assetTags = asset.metadata?.tags || []
                  
-                 // Include if the asset name or tags match the animal
+                 // Include if the asset name, id, or tags match the animal
                  return assetName.includes(animalName) || 
+                        assetId.includes(animalName) ||
                         assetTags.some(tag => animalName.includes(tag) || tag.includes(animalName))
                }
                
                return false
              })
              
-             console.log('Filtered assets for', selectedAnimal.name, ':', filteredAssets.map(a => ({ id: a.id, name: a.name, type: a.type })))
+             // Only log in development
+             if (process.env.NODE_ENV === 'development') {
+               console.log('Filtered assets for', selectedAnimal.name, ':', filteredAssets.map(a => ({ id: a.id, name: a.name, type: a.type })))
+             }
            }
            
-           // Preload models for this category
-           preloadCategory(category)
+           // Don't preload anything - let each page load only what it needs
+           // This prevents loading all animals when visiting a specific animal page
            setLoadingProgress(0.9)
            
            // Set assets and HDR
@@ -183,9 +214,11 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
            setLoadingProgress(1.0)
            setIsLoading(false)
            
-           // Log cache stats
-           const stats = getCacheStats()
-           console.log('Model cache stats:', stats)
+           // Log cache stats only in development
+           if (process.env.NODE_ENV === 'development') {
+             const stats = getCacheStats()
+             console.log('Model cache stats:', stats)
+           }
            
            // Notify scene is ready
            if (onSceneReady) {
@@ -331,7 +364,29 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
                      console.log('Jaguar positioned at:', position)
                      loggedPositions.current.add(asset.id)
                    }
-                 } else if (asset.id === 'forest2-landscape' || asset.id === 'forest2-landscape-bear' || asset.id === 'forest2-landscape-jaguar') {
+                 } else if (asset.id === 'raccoon-model') {
+                   position = [0, 0.3, 0] // Position raccoon slightly above ground
+                   scale = [0.6, 0.6, 0.6] // Scale raccoon up 3x from 0.2 to 0.6
+                   if (!loggedPositions.current.has(asset.id)) {
+                     console.log('Raccoon positioned at:', position)
+                     loggedPositions.current.add(asset.id)
+                   }
+                 } else if (asset.id === 'fox-model') {
+                   position = [0, 0.2, 0] // Position fox slightly above ground
+                   scale = [0.5, 0.5, 0.5] // Appropriate scale for fox
+                   if (!loggedPositions.current.has(asset.id)) {
+                     console.log('Fox positioned at:', position)
+                     loggedPositions.current.add(asset.id)
+                   }
+                 } else if (asset.id === 'polar-bear-model') {
+                   position = [0, 0.5, 0] // Position polar bear at ground level
+                   scale = [1.2, 1.2, 1.2] // Appropriate scale for polar bear
+                   if (!loggedPositions.current.has(asset.id)) {
+                     console.log('Polar Bear positioned at:', position)
+                     loggedPositions.current.add(asset.id)
+                   }
+
+                 } else if (asset.id === 'forest2-landscape' || asset.id === 'forest2-landscape-bear' || asset.id === 'forest2-landscape-jaguar' || asset.id === 'forest2-landscape-raccoon' || asset.id === 'forest2-landscape-fox' || asset.id === 'arctic-terrain1-landscape' || asset.id === 'mountain-landscape') {
                    position = [0, 0, 0] // Keep landscape at ground level
                    scale = [1, 1, 1]
                    if (!loggedPositions.current.has(asset.id)) {
@@ -355,9 +410,9 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
                        }
                      }}
                      // Animation settings for animals
-                     autoPlay={asset.id === 'deer-model' || asset.id === 'black-bear-model' || asset.id === 'jaguar-model'}
-                     loop={asset.id === 'deer-model' || asset.id === 'black-bear-model' || asset.id === 'jaguar-model'}
-                     animationSpeed={asset.id === 'deer-model' ? 0.8 : asset.id === 'black-bear-model' ? 0.4 : asset.id === 'jaguar-model' ? 0.6 : 1.0}
+                     autoPlay={asset.id === 'deer-model' || asset.id === 'black-bear-model' || asset.id === 'jaguar-model' || asset.id === 'raccoon-model' || asset.id === 'fox-model' || asset.id === 'polar-bear-model'}
+                     loop={asset.id === 'deer-model' || asset.id === 'black-bear-model' || asset.id === 'jaguar-model' || asset.id === 'raccoon-model' || asset.id === 'fox-model' || asset.id === 'polar-bear-model'}
+                     animationSpeed={asset.id === 'deer-model' ? 0.8 : asset.id === 'black-bear-model' ? 0.4 : asset.id === 'jaguar-model' ? 0.6 : asset.id === 'raccoon-model' ? 0.7 : asset.id === 'fox-model' ? 0.9 : asset.id === 'polar-bear-model' ? 0.5 : 1.0}
                    />
                  )
                })}

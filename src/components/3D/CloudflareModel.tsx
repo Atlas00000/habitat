@@ -42,11 +42,51 @@ function ModelComponent({
   const groupRef = useRef<THREE.Group>(null)
   const { isPreloaded, isLoading } = useModelPreloader()
 
-  // Use proxy URL to avoid CORS issues
+  // Use proxy URL to avoid CORS issues with retry mechanism
   const proxyUrl = `/api/proxy?url=${encodeURIComponent(asset.url)}`
   
-  // Load the model using useGLTF
-  const { scene, animations: modelAnimations } = useGLTF(proxyUrl)
+  // Load the model using useGLTF with error handling
+  const { scene, animations: modelAnimations } = useGLTF(proxyUrl, true, true, (error) => {
+    console.warn(`Failed to load ${asset.name} textures:`, error)
+    // Continue loading even if textures fail
+  })
+
+
+
+  // Ensure materials are properly set up for raccoon
+  useEffect(() => {
+    if (scene && asset.id === 'raccoon-model') {
+      // Give textures time to load before applying fallback colors
+      const timer = setTimeout(() => {
+        scene.traverse((child) => {
+          if (child instanceof THREE.Mesh && child.material) {
+            // Ensure material is properly configured
+            if (Array.isArray(child.material)) {
+              child.material.forEach(mat => {
+                if (mat.map) {
+                  mat.needsUpdate = true
+                  // Don't override color if texture exists
+                } else if (mat.color && !mat.map) {
+                  // Only apply fallback color if no texture map exists after delay
+                  mat.color.setHex(0x8B7355) // Brown color for raccoon
+                }
+              })
+            } else {
+              if (child.material.map) {
+                child.material.needsUpdate = true
+                // Don't override color if texture exists
+              } else if (child.material.color && !child.material.map) {
+                // Only apply fallback color if no texture map exists after delay
+                child.material.color.setHex(0x8B7355) // Brown color for raccoon
+              }
+            }
+          }
+        })
+      }, 2000) // Wait 2 seconds for textures to load
+
+      return () => clearTimeout(timer)
+    }
+  }, [scene, asset.id])
 
   useEffect(() => {
     const setupAnimations = async () => {
@@ -151,11 +191,13 @@ function ModelComponent({
     return null
   }
 
-  // Show cache status in console for debugging
-  if (isPreloaded(asset)) {
-    console.log(`Model ${asset.name} loaded from cache`)
-  } else if (isLoading(asset)) {
-    console.log(`Model ${asset.name} is currently loading`)
+  // Show cache status in console for debugging (only in development)
+  if (process.env.NODE_ENV === 'development') {
+    if (isPreloaded(asset)) {
+      console.log(`Model ${asset.name} loaded from cache`)
+    } else if (isLoading(asset)) {
+      console.log(`Model ${asset.name} is currently loading`)
+    }
   }
 
   // Adjust position based on asset type

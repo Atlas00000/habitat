@@ -31,19 +31,43 @@ export const ASSET_COLLECTIONS: Record<string, AssetCollection> = {
     name: 'Arctic Environment',
     description: 'Assets for the arctic region including polar bears and ice',
     assets: [
-      // Placeholder for arctic assets
-      // {
-      //   id: 'polar-bear-model',
-      //   name: 'Polar Bear Model',
-      //   url: 'https://your-cloudflare-url.com/polar-bear.glb',
-      //   type: 'model',
-      //   category: 'arctic',
-      //   metadata: {
-      //     description: 'High-quality polar bear 3D model',
-      //     tags: ['animal', 'bear', 'arctic'],
-      //     size: 2048576
-      //   }
-      // }
+      // Polar Bear Assets
+      {
+        id: 'polar-bear-model',
+        name: 'Polar Bear',
+        url: 'https://pub-fdb254222c8f4a71bed4b3dd7a1d8ba1.r2.dev/PolarBear.glb',
+        type: 'model',
+        category: 'arctic',
+        metadata: {
+          description: 'Realistic polar bear 3D model with animations',
+          tags: ['animal', 'polar-bear', 'arctic', 'mammal', 'carnivore', 'apex-predator'],
+          size: 0
+        }
+      },
+      {
+        id: 'arctic-terrain1-landscape',
+        name: 'Arctic Terrain Landscape',
+        url: 'https://pub-fdb254222c8f4a71bed4b3dd7a1d8ba1.r2.dev/arctic_terrain1.glb',
+        type: 'model',
+        category: 'arctic',
+        metadata: {
+          description: 'Arctic terrain environment for polar bear habitat',
+          tags: ['environment', 'landscape', 'arctic', 'ice', 'snow', 'habitat'],
+          size: 0
+        }
+      },
+      {
+        id: 'snow-environment-hdr',
+        name: 'Snow Environment HDR',
+        url: 'https://pub-fdb254222c8f4a71bed4b3dd7a1d8ba1.r2.dev/snowenvrion_1k.hdr',
+        type: 'hdr',
+        category: 'arctic',
+        metadata: {
+          description: 'Snow and ice environment map for arctic scenes',
+          tags: ['environment', 'hdr', 'snow', 'ice', 'arctic', 'lighting'],
+          size: 0
+        }
+      }
     ]
   },
   forest: {
@@ -171,6 +195,80 @@ export const ASSET_COLLECTIONS: Record<string, AssetCollection> = {
         category: 'forest',
         metadata: {
           description: 'Night time lakeside environment map for jaguar scenes',
+          tags: ['environment', 'hdr', 'night', 'lakeside', 'forest', 'lighting'],
+          size: 0
+        }
+      },
+      // Raccoon Assets
+      {
+        id: 'raccoon-model',
+        name: 'Raccoon',
+        url: 'https://pub-fdb254222c8f4a71bed4b3dd7a1d8ba1.r2.dev/raccoon.glb',
+        type: 'model',
+        category: 'forest',
+        metadata: {
+          description: 'Realistic raccoon 3D model with animations',
+          tags: ['animal', 'raccoon', 'forest', 'mammal', 'nocturnal', 'omnivore'],
+          size: 0
+        }
+      },
+      {
+        id: 'forest2-landscape-raccoon',
+        name: 'Forest Landscape for Raccoon',
+        url: 'https://pub-fdb254222c8f4a71bed4b3dd7a1d8ba1.r2.dev/forest2.glb',
+        type: 'model',
+        category: 'forest',
+        metadata: {
+          description: 'Forest environment for raccoon habitat',
+          tags: ['environment', 'landscape', 'forest', 'habitat'],
+          size: 0
+        }
+      },
+      {
+        id: 'lakeside-night-hdr-raccoon',
+        name: 'Lakeside Night HDR for Raccoon',
+        url: 'https://pub-fdb254222c8f4a71bed4b3dd7a1d8ba1.r2.dev/lakeside_night.hdr',
+        type: 'hdr',
+        category: 'forest',
+        metadata: {
+          description: 'Night time lakeside environment map for raccoon scenes',
+          tags: ['environment', 'hdr', 'night', 'lakeside', 'forest', 'lighting'],
+          size: 0
+        }
+      },
+      // Fox Assets
+      {
+        id: 'fox-model',
+        name: 'Fox',
+        url: 'https://pub-fdb254222c8f4a71bed4b3dd7a1d8ba1.r2.dev/fox.glb',
+        type: 'model',
+        category: 'forest',
+        metadata: {
+          description: 'Realistic fox 3D model with animations',
+          tags: ['animal', 'fox', 'forest', 'mammal', 'nocturnal', 'carnivore'],
+          size: 0
+        }
+      },
+      {
+        id: 'forest2-landscape-fox',
+        name: 'Forest Landscape for Fox',
+        url: 'https://pub-fdb254222c8f4a71bed4b3dd7a1d8ba1.r2.dev/forest2.glb',
+        type: 'model',
+        category: 'forest',
+        metadata: {
+          description: 'Forest environment for fox habitat',
+          tags: ['environment', 'landscape', 'forest', 'habitat'],
+          size: 0
+        }
+      },
+      {
+        id: 'lakeside-night-hdr-fox',
+        name: 'Lakeside Night HDR for Fox',
+        url: 'https://pub-fdb254222c8f4a71bed4b3dd7a1d8ba1.r2.dev/lakeside_night.hdr',
+        type: 'hdr',
+        category: 'forest',
+        metadata: {
+          description: 'Night time lakeside environment map for fox scenes',
           tags: ['environment', 'hdr', 'night', 'lakeside', 'forest', 'lighting'],
           size: 0
         }

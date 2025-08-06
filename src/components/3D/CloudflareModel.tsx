@@ -91,6 +91,16 @@ function ModelComponent({
                 action.play()
               }
             }
+          } else if (asset.id === 'jaguar-model') {
+            // Play all animations for jaguar
+            modelAnimations.forEach((clip) => {
+              const action = newMixer.clipAction(clip)
+              if (autoPlay) {
+                action.setLoop(loop ? THREE.LoopRepeat : THREE.LoopOnce, 0)
+                action.setEffectiveTimeScale(animationSpeed)
+                action.play()
+              }
+            })
           } else {
             // Play all animations for other models
             modelAnimations.forEach((clip) => {

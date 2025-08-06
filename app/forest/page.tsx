@@ -19,6 +19,13 @@ export default function ForestPage() {
       description: 'Discover the intelligent black bear in its natural habitat',
       path: '/forest/black-bear',
       gradient: 'from-brown-50 to-green-100'
+    },
+    {
+      id: 'jaguar',
+      name: 'Jaguar',
+      description: 'Explore the rainforest with our powerful jaguar',
+      path: '/forest/jaguar',
+      gradient: 'from-orange-50 to-yellow-100'
     }
   ]
 

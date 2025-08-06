@@ -21,29 +21,53 @@ interface EnvironmentSceneProps {
   selectedAnimal?: any
 }
 
-// Camera Controller Component with enhanced floor protection
-function CameraController() {
+// Enhanced Camera Controller with animal-focused positioning
+function CameraController({ selectedAnimal }: { selectedAnimal?: any }) {
   const { camera } = useThree()
+  const targetPosition = useRef<[number, number, number]>([0, 2, 6])
+  const currentPosition = useRef<[number, number, number]>([0, 2, 6])
   
   useEffect(() => {
-    // Set initial camera position closer to the scene
-    camera.position.set(0, 2, 8)
-    camera.lookAt(0, 1, 0)
-  }, [camera])
+    // Position camera based on selected animal
+    if (selectedAnimal) {
+      const animalName = selectedAnimal.name.toLowerCase()
+      
+      if (animalName.includes('deer')) {
+        targetPosition.current = [0, 1.5, 4] // Closer to deer
+        currentPosition.current = [0, 1.5, 4]
+      } else if (animalName.includes('bear')) {
+        targetPosition.current = [0, 2, 5] // Slightly further for bear
+        currentPosition.current = [0, 2, 5]
+      } else if (animalName.includes('jaguar')) {
+        targetPosition.current = [0, 1.8, 4.5] // Medium distance for jaguar
+        currentPosition.current = [0, 1.8, 4.5]
+      } else {
+        // Default position for other animals
+        targetPosition.current = [0, 2, 6]
+        currentPosition.current = [0, 2, 6]
+      }
+      
+      // Set initial camera position
+      camera.position.set(...targetPosition.current)
+      camera.lookAt(0, 1, 0)
+    }
+  }, [camera, selectedAnimal])
   
   useFrame(() => {
-    // Add subtle camera movement for more dynamic feel
-    const time = Date.now() * 0.0001
-    camera.position.x = Math.sin(time) * 0.3
-    camera.position.z = Math.cos(time) * 0.3 + 8
-    camera.position.y = 2 + Math.sin(time * 2) * 0.1
+    // Smooth camera movement towards target
+    const lerpFactor = 0.02
+    currentPosition.current = currentPosition.current.map((pos, index) => 
+      pos + (targetPosition.current[index] - pos) * lerpFactor
+    ) as [number, number, number]
     
-    // Enhanced bounds to prevent going under floor and out of view
-    camera.position.x = Math.max(-12, Math.min(12, camera.position.x))
-    camera.position.z = Math.max(4, Math.min(12, camera.position.z))
-    camera.position.y = Math.max(2, Math.min(10, camera.position.y)) // Stronger floor protection
+    camera.position.set(...currentPosition.current)
     
-    // Ensure camera always looks at the scene center
+    // Enhanced bounds to prevent going out of scope
+    camera.position.x = Math.max(-8, Math.min(8, camera.position.x))
+    camera.position.z = Math.max(3, Math.min(8, camera.position.z))
+    camera.position.y = Math.max(1.5, Math.min(6, camera.position.y))
+    
+    // Always look at the animal/scene center
     camera.lookAt(0, 1, 0)
   })
   
@@ -90,13 +114,27 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
   const loggedPositions = useRef<Set<string>>(new Set())
   const loggedAnimations = useRef<Set<string>>(new Set())
 
-  // Initialize camera position
+  // Initialize camera position based on selected animal
   useEffect(() => {
     if (cameraMode === 'orbit') {
-      camera.position.set(0, 2, 8)
+      if (selectedAnimal) {
+        const animalName = selectedAnimal.name.toLowerCase()
+        
+        if (animalName.includes('deer')) {
+          camera.position.set(0, 1.5, 4)
+        } else if (animalName.includes('bear')) {
+          camera.position.set(0, 2, 5)
+        } else if (animalName.includes('jaguar')) {
+          camera.position.set(0, 1.8, 4.5)
+        } else {
+          camera.position.set(0, 2, 6)
+        }
+      } else {
+        camera.position.set(0, 2, 6)
+      }
       camera.lookAt(0, 1, 0)
     }
-  }, [camera, cameraMode])
+  }, [camera, cameraMode, selectedAnimal])
 
            useEffect(() => {
            setLoadingProgress(0.2)
@@ -286,7 +324,14 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
                      console.log('Black Bear positioned at:', position)
                      loggedPositions.current.add(asset.id)
                    }
-                 } else if (asset.id === 'forest2-landscape' || asset.id === 'forest2-landscape-bear') {
+                 } else if (asset.id === 'jaguar-model') {
+                   position = [0, 0.5, 0] // Position jaguar at ground level
+                   scale = [4, 4, 4] // Moderate scale for jaguar
+                   if (!loggedPositions.current.has(asset.id)) {
+                     console.log('Jaguar positioned at:', position)
+                     loggedPositions.current.add(asset.id)
+                   }
+                 } else if (asset.id === 'forest2-landscape' || asset.id === 'forest2-landscape-bear' || asset.id === 'forest2-landscape-jaguar') {
                    position = [0, 0, 0] // Keep landscape at ground level
                    scale = [1, 1, 1]
                    if (!loggedPositions.current.has(asset.id)) {
@@ -310,41 +355,58 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
                        }
                      }}
                      // Animation settings for animals
-                     autoPlay={asset.id === 'deer-model' || asset.id === 'black-bear-model'}
-                     loop={asset.id === 'deer-model' || asset.id === 'black-bear-model'}
-                     animationSpeed={asset.id === 'deer-model' ? 0.8 : asset.id === 'black-bear-model' ? 0.4 : 1.0}
+                     autoPlay={asset.id === 'deer-model' || asset.id === 'black-bear-model' || asset.id === 'jaguar-model'}
+                     loop={asset.id === 'deer-model' || asset.id === 'black-bear-model' || asset.id === 'jaguar-model'}
+                     animationSpeed={asset.id === 'deer-model' ? 0.8 : asset.id === 'black-bear-model' ? 0.4 : asset.id === 'jaguar-model' ? 0.6 : 1.0}
                    />
                  )
                })}
       
-      {/* Camera Controls */}
+      {/* Camera Controls with enhanced zoom limits */}
       {cameraMode === 'orbit' ? (
         <OrbitControls 
           enablePan={true}
           enableZoom={true}
           enableRotate={true}
-          maxPolarAngle={Math.PI / 2.2} // Prevent going below ground
-          minPolarAngle={0.1} // Prevent going too high
-          minDistance={4}
-          maxDistance={12}
+          maxPolarAngle={Math.PI / 2.1} // Prevent going below ground
+          minPolarAngle={0.2} // Prevent going too high
+          minDistance={2.5} // Closer minimum distance
+          maxDistance={8} // Shorter maximum distance to prevent zooming out of scope
           target={[0, 1, 0]}
-          // Add damping for smoother movement
+          // Enhanced damping for smoother movement
           enableDamping={true}
-          dampingFactor={0.05}
+          dampingFactor={0.08}
           // Add auto-rotate for dynamic feel
           autoRotate={false}
           autoRotateSpeed={0.5}
+          // Add zoom damping
+          zoomSpeed={0.8}
+          // Prevent camera from going too far
+          onChange={(e) => {
+            const controls = e?.target
+            if (controls) {
+              // Ensure camera stays within bounds
+              const distance = controls.getDistance()
+              if (distance < 2.5) {
+                // Use dollyIn/dollyOut to adjust distance instead of setDistance
+                controls.dollyIn(2.5 / distance)
+              }
+              if (distance > 8) {
+                controls.dollyOut(distance / 8)
+              }
+            }
+          }}
         />
       ) : (
-        <CameraController />
+        <CameraController selectedAnimal={selectedAnimal} />
       )}
       
-      {/* Camera Bounds Protection */}
+      {/* Enhanced Camera Bounds Protection */}
       <CameraBounds 
-        minY={1.5}
-        maxY={15}
-        minDistance={3}
-        maxDistance={15}
+        minY={1.2}
+        maxY={8}
+        minDistance={2.5}
+        maxDistance={8}
         target={[0, 1, 0]}
       />
       

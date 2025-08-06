@@ -137,6 +137,43 @@ export const ASSET_COLLECTIONS: Record<string, AssetCollection> = {
           tags: ['environment', 'hdr', 'night', 'lakeside', 'lighting', 'bear-habitat'],
           size: 0
         }
+      },
+      // Jaguar Assets
+      {
+        id: 'jaguar-model',
+        name: 'Jaguar',
+        url: 'https://pub-fdb254222c8f4a71bed4b3dd7a1d8ba1.r2.dev/jaguars.glb',
+        type: 'model',
+        category: 'forest',
+        metadata: {
+          description: 'Realistic jaguar 3D model with animations',
+          tags: ['animal', 'jaguar', 'forest', 'predator', 'mammal', 'big-cat'],
+          size: 0
+        }
+      },
+      {
+        id: 'forest2-landscape-jaguar',
+        name: 'Forest Landscape for Jaguar',
+        url: 'https://pub-fdb254222c8f4a71bed4b3dd7a1d8ba1.r2.dev/forest2.glb',
+        type: 'model',
+        category: 'forest',
+        metadata: {
+          description: 'Forest environment for jaguar habitat',
+          tags: ['environment', 'landscape', 'forest', 'habitat'],
+          size: 0
+        }
+      },
+      {
+        id: 'lakeside-night-hdr-jaguar',
+        name: 'Lakeside Night HDR for Jaguar',
+        url: 'https://pub-fdb254222c8f4a71bed4b3dd7a1d8ba1.r2.dev/lakeside_night.hdr',
+        type: 'hdr',
+        category: 'forest',
+        metadata: {
+          description: 'Night time lakeside environment map for jaguar scenes',
+          tags: ['environment', 'hdr', 'night', 'lakeside', 'forest', 'lighting'],
+          size: 0
+        }
       }
     ]
   },

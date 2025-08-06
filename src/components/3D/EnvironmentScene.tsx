@@ -1,6 +1,6 @@
 "use client"
 
-import React, { Suspense, useState, useEffect } from 'react'
+import React, { Suspense, useState, useEffect, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls, Environment, Sky, useTexture } from '@react-three/drei'
 import { CloudflareModel } from './CloudflareModel'
@@ -84,6 +84,9 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
   const [hdrAsset, setHdrAsset] = useState<CloudflareAsset | null>(null)
   const { camera } = useThree()
   const { preloadCategory, getCacheStats } = useModelPreloader()
+  const renderedAssets = useRef<Set<string>>(new Set())
+  const loggedPositions = useRef<Set<string>>(new Set())
+  const loggedAnimations = useRef<Set<string>>(new Set())
 
   // Initialize camera position
   useEffect(() => {
@@ -98,24 +101,29 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
            const categoryAssets = getAssetsByCategory(category)
            setLoadingProgress(0.6)
            console.log('Category assets loaded:', categoryAssets.map(a => ({ id: a.id, name: a.name, type: a.type })))
-           setAssets(categoryAssets)
            
-           // Preload models for faster subsequent loads
-           preloadCategory(category).then(() => {
-             console.log('Model cache stats:', getCacheStats())
-           }).catch(error => {
-             console.warn('Failed to preload models:', error)
-           })
-
-           // Find HDR asset for environment
-           const hdr = categoryAssets.find(asset => asset.type === 'hdr')
-           setHdrAsset(hdr || null)
+           // Preload models for this category
+           preloadCategory(category)
            setLoadingProgress(0.9)
-
+           
+           // Set assets and HDR
+           const modelAssets = categoryAssets.filter(asset => asset.type === 'model')
+           const hdrAsset = categoryAssets.find(asset => asset.type === 'hdr')
+           
+           setAssets(modelAssets)
+           setHdrAsset(hdrAsset || null)
+           setLoadingProgress(1.0)
            setIsLoading(false)
-           setLoadingProgress(1)
-           onSceneReady?.()
-         }, [category, onSceneReady])
+           
+           // Log cache stats
+           const stats = getCacheStats()
+           console.log('Model cache stats:', stats)
+           
+           // Notify scene is ready
+           if (onSceneReady) {
+             onSceneReady()
+           }
+           }, [category, preloadCategory, getCacheStats, onSceneReady])
 
   const handleAssetClick = (asset: CloudflareAsset) => {
     onAssetSelect?.(asset)
@@ -224,8 +232,11 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
              {assets
                .filter(asset => asset.type === 'model') // Only render model assets
                .map((asset) => {
-                 // Debug: Log asset being rendered
-                 console.log('Rendering asset:', asset.id, asset.name, asset.type)
+                 // Debug: Log asset being rendered (only once per asset)
+                 if (!renderedAssets.current.has(asset.id)) {
+                   console.log('Rendering asset:', asset.id, asset.name, asset.type)
+                   renderedAssets.current.add(asset.id)
+                 }
                  
                  // Position deer above the landscape
                  let position: [number, number, number] = [0, 0, 0]
@@ -234,24 +245,37 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
                  if (asset.id === 'deer-model') {
                    position = [0, 0.5, 0] // Lower deer to ground level with slight elevation
                    scale = [1.5, 1.5, 1.5] // Make deer larger and more visible
-                   console.log('Deer positioned at:', position)
+                   if (!loggedPositions.current.has(asset.id)) {
+                     console.log('Deer positioned at:', position)
+                     loggedPositions.current.add(asset.id)
+                   }
                  } else if (asset.id === 'forest2-landscape') {
                    position = [0, 0, 0] // Keep landscape at ground level
                    scale = [1, 1, 1]
-                   console.log('Landscape positioned at:', position)
+                   if (!loggedPositions.current.has(asset.id)) {
+                     console.log('Landscape positioned at:', position)
+                     loggedPositions.current.add(asset.id)
+                   }
                  }
                  
                  return (
                    <CloudflareModel
-                     key={asset.id}
+                     key={`${asset.id}-${asset.url}`} // More unique key to prevent re-renders
                      asset={asset}
                      position={position}
                      scale={scale}
                      onClick={() => handleAssetClick(asset)}
                      onError={(error) => console.error(`Failed to load ${asset.name}:`, error)}
                      onAnimationsLoaded={(animations) => {
-                       console.log(`Animations loaded for ${asset.name}:`, animations)
+                       if (!loggedAnimations.current.has(asset.id)) {
+                         console.log(`Animations loaded for ${asset.name}:`, animations)
+                         loggedAnimations.current.add(asset.id)
+                       }
                      }}
+                     // Animation settings for deer
+                     autoPlay={asset.id === 'deer-model'}
+                     loop={asset.id === 'deer-model'}
+                     animationSpeed={asset.id === 'deer-model' ? 0.8 : 1.0}
                    />
                  )
                })}

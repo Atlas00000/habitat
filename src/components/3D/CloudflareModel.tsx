@@ -71,9 +71,16 @@ function ModelComponent({
           modelAnimations.forEach((clip) => {
             const action = newMixer.clipAction(clip)
             if (autoPlay) {
+              console.log(`Setting up animation for ${asset.name}:`, {
+                clipName: clip.name,
+                loop: loop,
+                speed: animationSpeed,
+                duration: clip.duration
+              })
               action.setLoop(loop ? THREE.LoopRepeat : THREE.LoopOnce, 0)
               action.setEffectiveTimeScale(animationSpeed)
               action.play()
+              console.log(`Animation started for ${asset.name}`)
             }
           })
         }
@@ -87,6 +94,10 @@ function ModelComponent({
   useFrame((state, delta) => {
     if (mixer) {
       mixer.update(delta * animationSpeed)
+      // Debug: Log animation progress occasionally
+      if (Math.random() < 0.01) { // 1% chance to log
+        console.log(`Animation mixer updating for ${asset.name}, delta:`, delta)
+      }
     }
   })
 

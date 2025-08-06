@@ -122,8 +122,8 @@ export const optimizedAnimalTemplate: AnimalPageConfig = {
   animationSettings: {
     autoPlay: true,
     loop: true,
-    animationSpeed: 1.0,
-    preferredAnimations: ['idle', 'walk', 'run']
+    animationSpeed: 0.8, // Slightly slower for natural movement
+    preferredAnimations: ['idle', 'walk', 'run', 'eating']
   },
   // Model optimization settings
   modelSettings: {
@@ -205,7 +205,7 @@ export const optimizedPolarBearConfig: AnimalPageConfig = {
   animationSettings: {
     autoPlay: true,
     loop: true,
-    animationSpeed: 0.8,
+    animationSpeed: 0.8, // Natural speed
     preferredAnimations: ["idle", "walk", "swim"]
   },
   modelSettings: {
@@ -287,7 +287,7 @@ export const optimizedLionConfig: AnimalPageConfig = {
   animationSettings: {
     autoPlay: true,
     loop: true,
-    animationSpeed: 1.2,
+    animationSpeed: 0.8, // Natural speed
     preferredAnimations: ["idle", "walk", "roar", "hunt"]
   },
   modelSettings: {

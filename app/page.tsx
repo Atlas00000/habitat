@@ -2,80 +2,146 @@
 
 import React from 'react'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
+import { 
+  Snowflake, 
+  TreePine, 
+  Mountain, 
+  Sun,
+  ArrowRight
+} from 'lucide-react'
+import { 
+  MobileLayout, 
+  MobileContainer, 
+  MobileGrid, 
+  MobileCard, 
+  MobileText, 
+  MobileHeading 
+} from '../src/components/MobileLayout'
 
 export default function HomePage() {
   const environments = [
     {
       id: 'arctic',
-      name: 'Arctic Region',
+      name: 'Arctic Biome',
       description: 'Explore the frozen wilderness with polar bears and ice',
-      gradient: 'from-blue-50 to-blue-100',
+      gradient: 'from-blue-50 to-cyan-100',
       color: 'blue',
-      path: '/arctic'
+      icon: Snowflake,
+      path: '/arctic',
+      bgGradient: 'from-blue-900 via-cyan-800 to-slate-900'
     },
     {
       id: 'forest',
-      name: 'Forest Region',
+      name: 'Forest Biome',
       description: 'Discover lush forests with diverse wildlife',
-      gradient: 'from-green-50 to-green-100',
+      gradient: 'from-green-50 to-emerald-100',
       color: 'green',
-      path: '/forest'
+      icon: TreePine,
+      path: '/forest',
+      bgGradient: 'from-green-900 via-green-800 to-emerald-900'
     },
     {
       id: 'mountain',
-      name: 'Mountain Region',
+      name: 'Mountain Biome',
       description: 'Scale the peaks and explore alpine environments',
-      gradient: 'from-gray-50 to-gray-100',
+      gradient: 'from-gray-50 to-slate-100',
       color: 'gray',
-      path: '/mountain'
+      icon: Mountain,
+      path: '/mountain',
+      bgGradient: 'from-gray-900 via-slate-800 to-stone-900'
     },
     {
       id: 'safari',
-      name: 'Safari Region',
+      name: 'Safari Biome',
       description: 'Experience African wildlife in their natural habitat',
       gradient: 'from-yellow-50 to-orange-100',
       color: 'orange',
-      path: '/safari'
+      icon: Sun,
+      path: '/safari',
+      bgGradient: 'from-yellow-900 via-orange-800 to-amber-900'
     }
   ]
 
   return (
-    <main className="w-full h-screen bg-gradient-to-br from-purple-50 to-indigo-100">
-      <div className="container mx-auto px-4 py-8 h-full">
-        <div className="text-center mb-12">
-          <h1 className="text-6xl font-bold text-gray-800 mb-4">
-            Environment Explorer
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Choose an environment to explore in immersive 3D
-          </p>
+    <MobileLayout>
+      <main className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-800 to-blue-900 relative">
+        {/* Animated background elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-10 w-32 h-32 bg-purple-400/20 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute top-40 right-20 w-40 h-40 bg-indigo-400/20 rounded-full blur-3xl animate-pulse delay-1000" />
+          <div className="absolute bottom-20 left-1/4 w-24 h-24 bg-blue-400/20 rounded-full blur-3xl animate-pulse delay-2000" />
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-          {environments.map((env) => (
-            <Link
-              key={env.id}
-              href={env.path}
-              className={`group relative overflow-hidden rounded-2xl shadow-2xl transition-all duration-500 hover:scale-105 hover:shadow-3xl bg-gradient-to-br ${env.gradient}`}
+
+        <div className="relative z-10 container mx-auto">
+          <MobileContainer>
+            <motion.div
+              initial={{ opacity: 0, y: -50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-center mb-8 md:mb-16"
             >
-              <div className="aspect-square p-8 flex flex-col justify-center items-center text-center">
-                <div className={`w-16 h-16 rounded-full bg-${env.color}-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                  <div className={`w-8 h-8 bg-${env.color}-600 rounded-full`}></div>
-                </div>
-                <h2 className="text-2xl font-bold text-gray-800 mb-2 group-hover:text-gray-900 transition-colors">
-                  {env.name}
-                </h2>
-                <p className="text-gray-600 group-hover:text-gray-700 transition-colors">
-                  {env.description}
-                </p>
-                <div className="mt-4 px-6 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-medium text-gray-700 group-hover:bg-white/30 transition-colors">
-                  Explore →
-                </div>
-              </div>
-            </Link>
-          ))}
+              <MobileHeading level={1} className="mb-4 md:mb-6">
+                Habitat Explorer
+              </MobileHeading>
+              <MobileText size="lg" className="max-w-3xl mx-auto">
+                Journey through Earth's most diverse biomes and discover the incredible wildlife 
+                that calls each unique environment home
+              </MobileText>
+            </motion.div>
+            
+            <MobileGrid className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 max-w-7xl mx-auto">
+              {environments.map((env, index) => (
+                <motion.div
+                  key={env.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                >
+                  <Link
+                    href={env.path}
+                    className="group relative overflow-hidden rounded-2xl shadow-2xl transition-all duration-500 hover:scale-105 hover:shadow-3xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 block h-full"
+                  >
+                    <div className="aspect-square p-4 md:p-8 flex flex-col justify-center items-center text-center relative">
+                      {/* Background gradient overlay */}
+                      <div className={`absolute inset-0 bg-gradient-to-br ${env.bgGradient} opacity-0 group-hover:opacity-20 transition-opacity duration-500`} />
+                      
+                      <div className="relative z-10">
+                        <div className={`w-12 h-12 md:w-16 md:h-16 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                          <env.icon className={`w-6 h-6 md:w-8 md:h-8 text-white`} />
+                        </div>
+                        <h2 className="text-lg md:text-2xl font-bold text-white mb-2 md:mb-3 group-hover:text-white transition-colors">
+                          {env.name}
+                        </h2>
+                        <p className="text-sm md:text-base text-white/80 group-hover:text-white/90 transition-colors mb-4 md:mb-6">
+                          {env.description}
+                        </p>
+                        <div className="flex items-center justify-center space-x-2 text-white/70 group-hover:text-white transition-colors">
+                          <span className="text-xs md:text-sm font-medium">Explore</span>
+                          <ArrowRight className="w-3 h-3 md:w-4 md:h-4 group-hover:translate-x-1 transition-transform" />
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </MobileGrid>
+
+            {/* Additional info */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              className="text-center mt-8 md:mt-16"
+            >
+              <MobileText size="sm" className="max-w-2xl mx-auto">
+                Each biome features stunning glass-morphism design, real animal data, 
+                and interactive elements that bring these incredible ecosystems to life.
+              </MobileText>
+            </motion.div>
+          </MobileContainer>
         </div>
-      </div>
-    </main>
+      </main>
+    </MobileLayout>
   )
 } 

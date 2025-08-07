@@ -4,6 +4,16 @@
 
 /* Arctic Region Viewer Styles */
 
+/* Mobile-first responsive design */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
 /* Custom animations */
 @keyframes float {
   0%, 100% {
@@ -23,6 +33,35 @@
   }
 }
 
+/* Forest-specific animations */
+@keyframes forest-glow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes leaf-fall {
+  0% {
+    transform: translateY(-100vh) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
 /* Apply animations */
 .animate-float {
   animation: float 3s ease-in-out infinite;
@@ -30,6 +69,43 @@
 
 .animate-spin-slow {
   animation: spin-slow 4s linear infinite;
+}
+
+.animate-forest-glow {
+  animation: forest-glow 4s ease-in-out infinite;
+}
+
+.animate-leaf-fall {
+  animation: leaf-fall 8s linear infinite;
+}
+
+/* Glass morphism effects */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+.glass-effect-hover {
+  transition: all 0.3s ease;
+}
+
+.glass-effect-hover:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.45);
+}
+
+/* Forest gradient backgrounds */
+.forest-gradient {
+  background: linear-gradient(135deg, #064e3b 0%, #065f46 25%, #047857 50%, #059669 75%, #10b981 100%);
+}
+
+.forest-gradient-light {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 25%, #a7f3d0 50%, #6ee7b7 75%, #34d399 100%);
 }
 
 /* Arctic gradient background */
@@ -51,6 +127,23 @@
   transform: scale(1.05);
 }
 
+/* Forest button styles */
+.forest-button {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  border-radius: 12px;
+}
+
+.forest-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
 /* Loading animation */
 @keyframes pulse {
   0%, 100% {
@@ -65,10 +158,71 @@
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Responsive design */
+/* Enhanced loading animation for forest */
+@keyframes forest-pulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
+}
+
+.animate-forest-pulse {
+  animation: forest-pulse 3s ease-in-out infinite;
+}
+
+/* Mobile-specific responsive design */
 @media (max-width: 768px) {
   .arctic-button {
     padding: 0.5rem;
+  }
+  
+  .forest-button {
+    padding: 0.75rem;
+  }
+
+  /* Mobile touch optimizations */
+  .glass-effect-hover:hover {
+    transform: none;
+  }
+
+  /* Mobile scrollbar */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+  }
+
+  /* Mobile container adjustments */
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Mobile text adjustments */
+  h1 {
+    font-size: 2rem;
+    line-height: 2.5rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
+  /* Mobile grid adjustments */
+  .grid {
+    gap: 1rem;
   }
 }
 
@@ -89,4 +243,39 @@
 
 .overflow-y-auto::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.5);
+}
+
+/* Forest-specific scrollbar */
+.forest-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.forest-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.forest-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.forest-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* Mobile touch targets */
+@media (max-width: 768px) {
+  button, a, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Mobile safe area support */
+@supports (padding: max(0px)) {
+  .container {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
 } 

@@ -14,7 +14,6 @@ import {
   MobileLayout, 
   MobileContainer, 
   MobileGrid, 
-  MobileCard, 
   MobileText, 
   MobileHeading 
 } from '../src/components/MobileLayout'

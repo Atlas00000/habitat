@@ -24,6 +24,7 @@ export function GlobalHeader() {
         const audio = new Audio('/Upbeat_Jungle.mp3')
         audio.loop = true
         audio.volume = 0.3
+        audio.preload = 'metadata'
         ;(window as any).backgroundAudio = audio
 
         // Add event listeners
@@ -49,13 +50,24 @@ export function GlobalHeader() {
 
     initMusic()
 
-    // Check audio state after initialization
-    setTimeout(() => {
+    // Check audio state after initialization and loading completion
+    const checkAudioState = () => {
       const audio = (window as any).backgroundAudio
       if (audio) {
         setIsMusicPlaying(!audio.paused)
       }
-    }, 200)
+    }
+
+    // Check immediately
+    setTimeout(checkAudioState, 200)
+    
+    // Check again after loading screen completes and periodically
+    setTimeout(checkAudioState, 2700) // 2.5s loading + 200ms buffer
+    
+    // Set up periodic checks for audio state changes
+    const audioStateInterval = setInterval(checkAudioState, 1000)
+    
+    return () => clearInterval(audioStateInterval)
   }, [])
 
   return (

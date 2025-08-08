@@ -133,6 +133,12 @@ export function NatureHomepage() {
   const [activeTrend, setActiveTrend] = useState(0)
   const { isLoading } = useLoading()
 
+  // Memoize expensive calculations
+  const selectedRegionData = React.useMemo(() => 
+    selectedRegion ? regions.find(r => r.id === selectedRegion) : null, 
+    [selectedRegion]
+  )
+
   useEffect(() => {
 
     
@@ -172,7 +178,7 @@ export function NatureHomepage() {
     setSelectedRegion(null)
   }
 
-  const selectedRegionData = selectedRegion ? regions.find(r => r.id === selectedRegion) : null
+
   
   // Don't render content while loading
   if (isLoading) {
@@ -398,6 +404,8 @@ export function NatureHomepage() {
                 objectFit: 'contain',
                 objectPosition: 'center'
               }}
+              loading="eager"
+              decoding="async"
             />
             
             {/* Interactive Region Points */}
@@ -424,12 +432,12 @@ export function NatureHomepage() {
                     animate={{
                       boxShadow: [
                         `0 0 20px ${region.color.split(' ')[1].replace('to-', '')}/50`,
-                        `0 0 40px ${region.color.split(' ')[1].replace('to-', '')}/80`,
+                        `0 0 30px ${region.color.split(' ')[1].replace('to-', '')}/70`,
                         `0 0 20px ${region.color.split(' ')[1].replace('to-', '')}/50`
                       ]
                     }}
                     transition={{
-                      duration: 2,
+                      duration: 3,
                       repeat: Infinity,
                       ease: "easeInOut"
                     }}

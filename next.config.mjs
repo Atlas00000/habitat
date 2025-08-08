@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Enable standalone output for Docker
+  output: 'standalone',
   experimental: {
     // Enable experimental features for better Fast Refresh
     turbo: {

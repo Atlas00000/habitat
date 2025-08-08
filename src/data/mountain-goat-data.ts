@@ -28,8 +28,8 @@ export const mountainGoatData = {
     diet: "Herbivorous - grasses, herbs, shrubs"
   },
 
-  // Habitat information
-  habitat: {
+  // Habitat details
+  habitatDetails: {
     elevation: "6,000-14,000 feet",
     terrain: "Rocky cliffs and steep slopes",
     climate: "Cold alpine conditions",

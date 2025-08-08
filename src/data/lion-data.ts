@@ -28,8 +28,8 @@ export const lionData = {
     diet: "Carnivorous - primarily large herbivores"
   },
 
-  // Habitat information
-  habitat: {
+  // Habitat details
+  habitatDetails: {
     elevation: "Sea level to 3,000 feet",
     terrain: "Open grasslands and savannas",
     climate: "Hot and dry with seasonal rains",

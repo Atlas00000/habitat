@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "next build",
     "dev": "next dev --port 3000",
     "dev:fast": "next dev --turbo --port 3000 --experimental-turbo",
     "dev:refresh": "next dev --turbo --port 3000 --experimental-turbo --experimental-https",
@@ -13,7 +13,8 @@
     "dev:clean": "rm -rf .next && rm -rf node_modules/.cache && next dev --turbo --port 3000",
     "dev:reset": "rm -rf .next && rm -rf node_modules/.cache && rm -rf .turbo && next dev --turbo --port 3000",
     "dev:setup": "node scripts/dev-setup.js",
-    "prepare": "npm run build",
+    "prepare": "echo 'Skipping prepare script for Next.js app'",
+    "pre-build": "node scripts/pre-build-check.js",
     "start": "next dev",
     "build-app": "next build",
     "serve": "next start",

@@ -35,7 +35,8 @@ export default function SafariPage() {
       description: 'Discover the majestic lion in its savanna habitat',
       path: '/safari/lion',
       gradient: 'from-yellow-50 to-orange-100',
-      data: lionData
+      data: lionData,
+      icon: '🦁'
     }
   ]
 
@@ -320,7 +321,7 @@ export default function SafariPage() {
                     >
                       <div className="flex items-center space-x-4">
                         <div className="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center">
-                          <span className="text-2xl">🦁</span>
+                          <span className="text-2xl">{animal.icon}</span>
                         </div>
                         <div className="flex-1">
                           <h3 className="text-lg font-bold text-white mb-1">{animal.name}</h3>

@@ -35,7 +35,8 @@ export default function MountainPage() {
       description: 'Discover the agile mountain goat in its rocky habitat',
       path: '/mountain/mountain-goat',
       gradient: 'from-gray-50 to-slate-100',
-      data: mountainGoatData
+      data: mountainGoatData,
+      icon: '🐐'
     }
   ]
 
@@ -318,7 +319,7 @@ export default function MountainPage() {
                     >
                       <div className="flex items-center space-x-4">
                         <div className="w-16 h-16 bg-gray-500/20 rounded-full flex items-center justify-center">
-                          <span className="text-2xl">🐐</span>
+                          <span className="text-2xl">{animal.icon}</span>
                         </div>
                         <div className="flex-1">
                           <h3 className="text-lg font-bold text-white mb-1">{animal.name}</h3>

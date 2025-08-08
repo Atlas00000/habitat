@@ -49,7 +49,8 @@ export default function ForestPage() {
       description: 'Discover the black bear in its forest habitat',
       path: '/forest/black-bear',
       gradient: 'from-green-50 to-emerald-100',
-      data: blackBearData
+      data: blackBearData,
+      icon: '🐻'
     },
     {
       id: 'deer',
@@ -57,7 +58,8 @@ export default function ForestPage() {
       description: 'Discover the graceful deer in its forest habitat',
       path: '/forest/deer',
       gradient: 'from-green-50 to-emerald-100',
-      data: deerData
+      data: deerData,
+      icon: '🦌'
     },
     {
       id: 'fox',
@@ -65,7 +67,8 @@ export default function ForestPage() {
       description: 'Discover the cunning fox in its forest habitat',
       path: '/forest/fox',
       gradient: 'from-green-50 to-emerald-100',
-      data: foxData
+      data: foxData,
+      icon: '🦊'
     },
     {
       id: 'raccoon',
@@ -73,7 +76,8 @@ export default function ForestPage() {
       description: 'Discover the clever raccoon in its forest habitat',
       path: '/forest/raccoon',
       gradient: 'from-green-50 to-emerald-100',
-      data: raccoonData
+      data: raccoonData,
+      icon: '🦝'
     },
     {
       id: 'jaguar',
@@ -81,7 +85,8 @@ export default function ForestPage() {
       description: 'Discover the powerful jaguar in its forest habitat',
       path: '/forest/jaguar',
       gradient: 'from-green-50 to-emerald-100',
-      data: jaguarData
+      data: jaguarData,
+      icon: '🐆'
     }
   ]
 
@@ -480,7 +485,7 @@ export default function ForestPage() {
                           whileHover={{ scale: 1.1, rotate: 360 }}
                           transition={{ duration: 0.6 }}
                         >
-                          <span className="text-2xl">🐻</span>
+                          <span className="text-2xl">{animal.icon}</span>
                         </motion.div>
                         <div className="flex-1">
                           <h3 className="text-lg font-bold text-white mb-1 group-hover:text-green-300 transition-colors">

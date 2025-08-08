@@ -30,7 +30,8 @@ export default function ArcticPage() {
       description: 'Discover the majestic polar bear in its frozen habitat',
       path: '/arctic/polar-bear',
       gradient: 'from-blue-50 to-white-100',
-      data: polarBearData
+      data: polarBearData,
+      icon: '🐻‍❄️'
     }
   ]
 
@@ -159,7 +160,7 @@ export default function ArcticPage() {
                           whileHover={{ scale: 1.1, rotate: 360 }}
                           transition={{ duration: 0.6 }}
                         >
-                          <span className="text-2xl">🐻‍❄️</span>
+                          <span className="text-2xl">{animal.icon}</span>
                         </motion.div>
                         <div className="flex-1">
                           <h3 className="text-lg font-bold text-white mb-1 group-hover:text-blue-300 transition-colors">

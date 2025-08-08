@@ -6,15 +6,23 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "dev": "next dev --turbo",
-    "dev:fast": "next dev --turbo --port 3000",
+    "dev": "next dev --port 3000",
+    "dev:fast": "next dev --turbo --port 3000 --experimental-turbo",
+    "dev:refresh": "next dev --turbo --port 3000 --experimental-turbo --experimental-https",
+    "dev:debug": "next dev --turbo --port 3000 --inspect",
+    "dev:clean": "rm -rf .next && rm -rf node_modules/.cache && next dev --turbo --port 3000",
+    "dev:reset": "rm -rf .next && rm -rf node_modules/.cache && rm -rf .turbo && next dev --turbo --port 3000",
+    "dev:setup": "node scripts/dev-setup.js",
     "prepare": "npm run build",
     "start": "next dev",
     "build-app": "next build",
     "serve": "next start",
     "type-check": "tsc --noEmit",
     "lint": "next lint",
-    "clean": "rm -rf .next && rm -rf node_modules/.cache"
+    "clean": "rm -rf .next && rm -rf node_modules/.cache",
+    "clean:all": "rm -rf .next && rm -rf node_modules/.cache && rm -rf dist && rm -rf .turbo",
+    "reset": "rm -rf .next && rm -rf node_modules/.cache && npm run dev",
+    "kill-port": "lsof -ti:3000 | xargs kill -9"
   },
   "keywords": [
     "react",

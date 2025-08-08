@@ -47,18 +47,18 @@ export function Header({ className = "" }: HeaderProps) {
   }
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-sm border-b border-white/10 ${className}`}>
+    <header className={`fixed top-0 left-0 right-0 z-50 bg-emerald-900/20 backdrop-blur-sm border-b border-emerald-400/20 ${className}`}>
       <MobileContainer className="py-2 md:py-4">
         <div className="flex items-center justify-between">
           {/* Logo/Brand */}
           <Link href="/" className="flex items-center space-x-2 group">
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="w-8 h-8 md:w-10 md:h-10 bg-white/10 rounded-lg flex items-center justify-center"
+              className="w-8 h-8 md:w-10 md:h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center border border-emerald-400/30"
             >
-              <Snowflake className="w-5 h-5 md:w-6 md:h-6 text-white" />
+              <TreePine className="w-5 h-5 md:w-6 md:h-6 text-emerald-300" />
             </motion.div>
-            <span className="text-white font-bold text-lg md:text-xl group-hover:text-white/80 transition-colors">
+            <span className="text-white font-bold text-lg md:text-xl group-hover:text-emerald-200 transition-colors">
               Habitat Explorer
             </span>
           </Link>
@@ -75,8 +75,8 @@ export function Header({ className = "" }: HeaderProps) {
                   href={item.href}
                   className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200 ${
                     active 
-                      ? 'bg-white/20 text-white' 
-                      : 'text-white/70 hover:text-white hover:bg-white/10'
+                      ? 'bg-emerald-500/20 text-emerald-200 border border-emerald-400/30' 
+                      : 'text-emerald-200/70 hover:text-emerald-200 hover:bg-emerald-500/10'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -89,12 +89,12 @@ export function Header({ className = "" }: HeaderProps) {
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMobileMenu}
-            className="md:hidden p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+            className="md:hidden p-2 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 transition-colors border border-emerald-400/30"
           >
             {isMobileMenuOpen ? (
-              <X className="w-5 h-5 text-white" />
+              <X className="w-5 h-5 text-emerald-200" />
             ) : (
-              <Menu className="w-5 h-5 text-white" />
+              <Menu className="w-5 h-5 text-emerald-200" />
             )}
           </button>
         </div>
@@ -118,8 +118,8 @@ export function Header({ className = "" }: HeaderProps) {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                     active 
-                      ? 'bg-white/20 text-white' 
-                      : 'text-white/70 hover:text-white hover:bg-white/10'
+                      ? 'bg-emerald-500/20 text-emerald-200 border border-emerald-400/30' 
+                      : 'text-emerald-200/70 hover:text-emerald-200 hover:bg-emerald-500/10'
                   }`}
                 >
                   <Icon className="w-5 h-5" />

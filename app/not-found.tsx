@@ -31,12 +31,12 @@ export default function NotFound() {
 
   return (
     <MobileLayout>
-      <main className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-800 to-blue-900 relative">
+      <main className="min-h-screen bg-gradient-to-br from-emerald-900 via-teal-800 to-cyan-700 relative">
         {/* Animated background elements */}
         <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-32 h-32 bg-purple-400/20 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute top-40 right-20 w-40 h-40 bg-indigo-400/20 rounded-full blur-3xl animate-pulse delay-1000" />
-          <div className="absolute bottom-20 left-1/4 w-24 h-24 bg-blue-400/20 rounded-full blur-3xl animate-pulse delay-2000" />
+          <div className="absolute top-20 left-10 w-32 h-32 bg-emerald-400/20 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute top-40 right-20 w-40 h-40 bg-teal-400/20 rounded-full blur-3xl animate-pulse delay-1000" />
+          <div className="absolute bottom-20 left-1/4 w-24 h-24 bg-cyan-400/20 rounded-full blur-3xl animate-pulse delay-2000" />
         </div>
 
         <div className="relative z-10 container mx-auto">
@@ -48,8 +48,8 @@ export default function NotFound() {
               className="text-center mb-8 md:mb-16"
             >
               <div className="flex justify-center mb-6">
-                <div className="w-24 h-24 md:w-32 md:h-32 bg-white/10 backdrop-blur-xl rounded-full flex items-center justify-center border border-white/20">
-                  <Search className="w-12 h-12 md:w-16 md:h-16 text-white" />
+                <div className="w-24 h-24 md:w-32 md:h-32 bg-emerald-500/20 backdrop-blur-xl rounded-full flex items-center justify-center border border-emerald-400/30">
+                  <Search className="w-12 h-12 md:w-16 md:h-16 text-emerald-300" />
                 </div>
               </div>
               
@@ -85,17 +85,17 @@ export default function NotFound() {
                     >
                       <Link
                         href={page.href}
-                        className="group block p-6 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105"
+                        className="group block p-6 rounded-2xl bg-emerald-500/10 backdrop-blur-xl border border-emerald-400/20 hover:bg-emerald-500/15 transition-all duration-300 hover:scale-105"
                       >
                         <div className="flex items-center space-x-4">
-                          <div className="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <Icon className="w-6 h-6 text-white" />
+                          <div className="w-12 h-12 bg-emerald-500/20 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <Icon className="w-6 h-6 text-emerald-300" />
                           </div>
                           <div className="flex-1">
                             <h3 className="text-white font-bold text-lg mb-1">
                               {page.name}
                             </h3>
-                            <p className="text-white/70 text-sm">
+                            <p className="text-emerald-200 text-sm">
                               {page.description}
                             </p>
                           </div>
@@ -116,7 +116,7 @@ export default function NotFound() {
             >
               <Link
                 href="/"
-                className="inline-flex items-center space-x-2 px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white font-medium hover:bg-white/20 transition-all duration-200 group"
+                className="inline-flex items-center space-x-2 px-6 py-3 bg-emerald-500/20 backdrop-blur-sm border border-emerald-400/30 rounded-lg text-emerald-200 font-medium hover:bg-emerald-500/30 transition-all duration-200 group"
               >
                 <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                 <span>Back to Home</span>

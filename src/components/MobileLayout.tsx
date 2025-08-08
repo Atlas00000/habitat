@@ -135,13 +135,18 @@ export function MobileHeading({
     3: 'text-lg md:text-xl lg:text-2xl font-semibold'
   }
 
-  const Tag = `h${level}` as keyof JSX.IntrinsicElements
+  const baseClassName = `mobile-heading text-white ${levelClasses[level]} ${className}`
 
-  return (
-    <Tag className={`mobile-heading text-white ${levelClasses[level]} ${className}`}>
-      {children}
-    </Tag>
-  )
+  switch (level) {
+    case 1:
+      return <h1 className={baseClassName}>{children}</h1>
+    case 2:
+      return <h2 className={baseClassName}>{children}</h2>
+    case 3:
+      return <h3 className={baseClassName}>{children}</h3>
+    default:
+      return <h1 className={baseClassName}>{children}</h1>
+  }
 }
 
 // Mobile-specific utilities

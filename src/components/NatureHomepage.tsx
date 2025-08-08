@@ -1,129 +1,248 @@
 "use client"
 
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect } from "react"
 import Link from "next/link"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { 
-  MapPin, 
-  ChevronRight, 
-  Play, 
-  Info, 
-  X, 
+  TrendingUp, 
+  Users, 
+  Award, 
+  Activity, 
   Globe, 
   Leaf, 
   Heart, 
-  Sparkles, 
-  Zap, 
   Star, 
-  Award, 
-  TrendingUp, 
-  Users, 
+  Zap, 
   Target,
-  ArrowRight
+  MapPin,
+  ChevronRight,
+  Play,
+  Info,
+  X,
+  ArrowRight,
+  Share,
+  Twitter,
+  Facebook,
+  Instagram,
+  Github,
+  ExternalLink,
+  Mail,
+  Volume2,
+  VolumeX
 } from "lucide-react"
-import { 
-  MobileLayout, 
-  MobileContainer, 
-  MobileGrid, 
-  MobileText, 
-  MobileHeading 
-} from './MobileLayout'
 
-interface NatureRegion {
+interface Region {
   id: string
   name: string
   displayName: string
   description: string
-  icon: string
+  position: { x: number; y: number }
+  mobilePosition?: { x: number; y: number }
   color: string
   wildlife: string[]
-  gradient: string
-  difficulty: string
-  completion: number
+  icon: string
   path: string
 }
 
-const natureRegions: NatureRegion[] = [
+const regions: Region[] = [
   {
     id: "arctic",
     name: "Arctic Life",
     displayName: "Arctic Life",
     description: "Explore the frozen wilderness of the Arctic",
-    icon: "❄️",
+    position: { x: 20, y: 35 },
+    mobilePosition: { x: 25, y: 40 },
     color: "from-blue-400 to-cyan-500",
-    gradient: "from-blue-500/20 to-cyan-500/20",
     wildlife: ["Polar Bear", "Arctic Fox", "Snowy Owl", "Seal"],
-    difficulty: "Beginner",
-    completion: 85,
+    icon: "🐻‍❄️",
     path: "/arctic"
   },
   {
-    id: "forest",
-    name: "Forest Realm",
-    displayName: "Forest Realm",
-    description: "Wander through dense forests and woodland creatures",
-    icon: "🌲",
-    color: "from-green-500 to-emerald-600",
-    gradient: "from-green-500/20 to-emerald-600/20",
-    wildlife: ["Gray Wolf", "Red Deer", "Great Horned Owl", "Red Fox"],
-    difficulty: "Intermediate",
-    completion: 75,
-    path: "/forest"
-  },
-  {
-    id: "mountain",
+    id: "alpine",
     name: "Alpine Heights",
     displayName: "Alpine Heights",
     description: "Discover mountain wildlife and rugged terrain",
-    icon: "🏔️",
+    position: { x: 20, y: 55 },
+    mobilePosition: { x: 25, y: 60 },
     color: "from-gray-400 to-blue-400",
-    gradient: "from-gray-500/20 to-blue-500/20",
     wildlife: ["Mountain Goat", "Golden Eagle", "Marmot", "Alpine Ibex"],
-    difficulty: "Intermediate",
-    completion: 60,
+    icon: "🏔️",
     path: "/mountain"
+  },
+
+  {
+    id: "forest",
+    name: "Forest Realm",
+    displayName: "FOREST REALM",
+    description: "Wander through dense forests and woodland creatures",
+    position: { x: 75, y: 50 },
+    mobilePosition: { x: 75, y: 55 },
+    color: "from-green-500 to-emerald-600",
+    wildlife: ["Gray Wolf", "Red Deer", "Great Horned Owl", "Red Fox"],
+    icon: "🌲",
+    path: "/forest"
   },
   {
     id: "safari",
     name: "Global Safari",
-    displayName: "Global Safari",
+    displayName: "GLOBAL SAFARI",
     description: "Experience wildlife from around the world",
-    icon: "🌍",
+    position: { x: 75, y: 60 },
+    mobilePosition: { x: 75, y: 70 },
     color: "from-yellow-500 to-orange-500",
-    gradient: "from-yellow-500/20 to-orange-500/20",
     wildlife: ["Lion", "Elephant", "Giraffe", "Zebra"],
-    difficulty: "Expert",
-    completion: 25,
+    icon: "🌎",
     path: "/safari"
   }
 ]
 
+const stats = [
+  { value: "150+", label: "Species", icon: "🐾", color: "text-emerald-300", trend: "+12%" },
+  { value: "2,341", label: "Active Users", icon: "👥", color: "text-blue-300", trend: "+23" },
+  { value: "89", label: "Protected Wildlife", icon: "🛡️", color: "text-green-300", trend: "+5" },
+  { value: "45", label: "Lessons Completed", icon: "📚", color: "text-yellow-300", trend: "+2" },
+  { value: "78%", label: "Daily Goal", icon: "��", color: "text-purple-300", trend: "+12%" },
+  { value: "3/5", label: "Regions", icon: "🌍", color: "text-cyan-300", trend: "+1" },
+  { value: "1,247", label: "Impact", icon: "🌱", color: "text-green-300", trend: "+89" },
+  { value: "23", label: "Achievements", icon: "⭐", color: "text-yellow-300", trend: "+5" }
+]
+
+const liveActivity = [
+  { title: "Conservation Hero", subtitle: "Level 5 +2 levels", icon: "🔑", color: "from-yellow-400 to-orange-500" },
+  { title: "Rising Explorer", subtitle: "Top 10% +15%", icon: "🏔️", color: "from-blue-400 to-cyan-500" },
+  { title: "Community Leader", subtitle: "2,341 +89", icon: "👥", color: "from-green-400 to-emerald-500" }
+]
+
 export function NatureHomepage() {
+  const [hoveredRegion, setHoveredRegion] = useState<string | null>(null)
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null)
-  const [isLoaded, setIsLoaded] = useState(false)
-  const [activeIndex, setActiveIndex] = useState(0)
-  const [isScrolling, setIsScrolling] = useState(false)
-  const scrollRef = useRef<HTMLDivElement>(null)
+  const [isMobile, setIsMobile] = useState(false)
+  const [currentTime, setCurrentTime] = useState<string>("")
+  const [activeTrend, setActiveTrend] = useState(0)
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false)
+  const [hasUserInteracted, setHasUserInteracted] = useState(false)
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
-    setIsLoaded(true)
-    const interval = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % 3)
-    }, 3000)
-    return () => clearInterval(interval)
-  }, [])
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolling(true)
-      const timeout = setTimeout(() => setIsScrolling(false), 150)
-      return () => clearTimeout(timeout)
+    // Set client flag to prevent hydration issues
+    setIsClient(true)
+    
+    // Load saved state from localStorage
+    const savedMusicState = localStorage.getItem('natureViewMusicPlaying') === 'true'
+    const savedInteractionState = localStorage.getItem('natureViewUserInteracted') === 'true'
+    
+    setIsMusicPlaying(savedMusicState)
+    setHasUserInteracted(savedInteractionState)
+    
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
     }
-
-    const scrollElement = scrollRef.current
-    if (scrollElement) {
-      scrollElement.addEventListener('scroll', handleScroll)
-      return () => scrollElement.removeEventListener('scroll', handleScroll)
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    
+    const timeInterval = setInterval(() => {
+      setCurrentTime(new Date().toLocaleTimeString())
+    }, 1000)
+    
+    const trendInterval = setInterval(() => {
+      setActiveTrend((prev) => (prev + 1) % 4)
+    }, 4000)
+    
+    // Initialize background music (manual play only)
+    const initMusic = () => {
+      try {
+        const audio = new Audio('/Upbeat_Jungle.mp3')
+        audio.loop = true
+        audio.volume = 0.3 // Set volume to 30%
+        
+        // Check if audio can be loaded
+        audio.addEventListener('canplaythrough', () => {
+          console.log('Audio ready to play')
+        })
+        
+        audio.addEventListener('error', () => {
+          console.log('Audio file not found or cannot be loaded')
+        })
+        
+        // Keep button state in sync with audio state
+        audio.addEventListener('play', () => {
+          console.log('Audio started playing')
+          setIsMusicPlaying(true)
+          localStorage.setItem('natureViewMusicPlaying', 'true')
+        })
+        
+        audio.addEventListener('pause', () => {
+          console.log('Audio paused')
+          setIsMusicPlaying(false)
+          localStorage.setItem('natureViewMusicPlaying', 'false')
+        })
+        
+        // Store audio element for later use
+        ;(window as any).backgroundAudio = audio
+      } catch (error) {
+        console.log('Audio initialization failed')
+      }
+    }
+    
+    initMusic()
+    
+    // Check if audio is already playing on mount (for page refreshes)
+    const checkAudioState = () => {
+      const audio = (window as any).backgroundAudio
+      if (audio) {
+        // Small delay to ensure audio is loaded
+        setTimeout(() => {
+          if (!audio.paused) {
+            console.log('Audio was already playing, updating state')
+            setIsMusicPlaying(true)
+          }
+        }, 100)
+      }
+    }
+    
+    // Add user interaction listener to enable auto-play
+    const handleUserInteraction = () => {
+      if (!hasUserInteracted) {
+        setHasUserInteracted(true)
+        localStorage.setItem('natureViewUserInteracted', 'true')
+        const audio = (window as any).backgroundAudio
+        if (audio && !isMusicPlaying) {
+          audio.play().then(() => {
+            console.log('Auto-play started on user interaction!')
+            setIsMusicPlaying(true)
+            localStorage.setItem('natureViewMusicPlaying', 'true')
+          }).catch((error) => {
+            console.log('Auto-play failed:', error)
+          })
+        }
+        // Remove listeners after first interaction
+        document.removeEventListener('click', handleUserInteraction)
+        document.removeEventListener('keydown', handleUserInteraction)
+        document.removeEventListener('touchstart', handleUserInteraction)
+      }
+    }
+    
+    // Check audio state after initialization
+    setTimeout(checkAudioState, 200)
+    
+    // Add event listeners for user interaction (removed scroll to prevent premature triggering)
+    document.addEventListener('click', handleUserInteraction)
+    document.addEventListener('keydown', handleUserInteraction)
+    document.addEventListener('touchstart', handleUserInteraction)
+    
+          return () => {
+        window.removeEventListener('resize', checkMobile)
+        clearInterval(timeInterval)
+        clearInterval(trendInterval)
+        document.removeEventListener('click', handleUserInteraction)
+        document.removeEventListener('keydown', handleUserInteraction)
+        document.removeEventListener('touchstart', handleUserInteraction)
+        const audio = (window as any).backgroundAudio
+        if (audio) {
+          audio.pause()
+          audio.currentTime = 0
+        }
     }
   }, [])
 
@@ -131,482 +250,757 @@ export function NatureHomepage() {
     setSelectedRegion(regionId)
   }
 
-  const handleExploreRegion = (regionId: string) => {
-    const region = natureRegions.find(r => r.id === regionId)
-    if (region) {
-      window.location.href = region.path
-    }
+  const handleRegionHover = (regionId: string | null) => {
+    setHoveredRegion(regionId)
   }
 
-  const handleRegionCardClick = (regionId: string) => {
-    const region = natureRegions.find(r => r.id === regionId)
-    if (region) {
-      window.location.href = region.path
-    }
+  const closePanel = () => {
+    setSelectedRegion(null)
   }
 
-  const stats = [
-    { value: "150+", label: "Species", icon: "🐾", color: "text-emerald-300", trend: "+12%" },
-    { value: "4/4", label: "Regions", icon: "🌍", color: "text-blue-300", trend: "+1" },
-    { value: "1,247", label: "Trees", icon: "🌱", color: "text-green-300", trend: "+89" }
-  ]
-
-  const achievements = [
-    { icon: Award, label: "Conservation Hero", color: "text-yellow-300" },
-    { icon: TrendingUp, label: "Rising Explorer", color: "text-emerald-300" },
-    { icon: Users, label: "Community Leader", color: "text-blue-300" }
-  ]
+  const selectedRegionData = selectedRegion ? regions.find(r => r.id === selectedRegion) : null
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-teal-800 to-cyan-700 pt-16 overflow-hidden">
-      {/* Enhanced Background with Multiple Layers */}
-      <div className="fixed inset-0 pointer-events-none">
-        {/* Base gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-emerald-900 via-teal-800 to-cyan-700" />
-        
-        {/* Animated mesh gradient overlay */}
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-emerald-400/10 via-teal-400/10 to-cyan-400/10 animate-pulse" />
-          <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-gradient-to-br from-emerald-300/5 to-teal-300/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-          <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-gradient-to-br from-cyan-300/5 to-blue-300/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
-        </div>
-
-        {/* Floating Particles with Enhanced Animation */}
-        {Array.from({ length: 30 }).map((_, i) => {
-          // Use deterministic positioning based on index to avoid hydration mismatch
-          const left = (i * 3.33) % 100
-          const top = (i * 2.5) % 100
-          const duration = 4 + (i % 3)
-          const delay = (i % 3)
-          
-          return (
-            <motion.div
-              key={i}
-              className="absolute w-1 h-1 bg-white/30 rounded-full"
+    <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-teal-800 to-cyan-700 nature-view-gradient overflow-hidden">
+      {/* Background Audio */}
+      <audio src="/Upbeat_Jungle.mp3" loop preload="auto" />
+      
+      {/* Background Map Image */}
+      <div className="fixed inset-0 pointer-events-none opacity-20">
+        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" 
               style={{
-                left: `${left}%`,
-                top: `${top}%`,
-              }}
-              animate={{
-                y: [0, -20, 0],
-                opacity: [0.3, 0.8, 0.3],
-                scale: [1, 1.5, 1],
-              }}
-              transition={{
-                duration,
-                repeat: Infinity,
-                delay,
-                ease: "easeInOut",
-              }}
-            />
-          )
-        })}
-        
-        {/* Enhanced Light Rays */}
-        <div className="absolute inset-0 opacity-40">
-          <motion.div 
-            className="absolute top-0 left-1/4 w-px h-full bg-gradient-to-b from-transparent via-white/30 to-transparent"
-            animate={{ opacity: [0.3, 0.8, 0.3] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <motion.div 
-            className="absolute top-0 right-1/3 w-px h-full bg-gradient-to-b from-transparent via-white/20 to-transparent"
-            animate={{ opacity: [0.2, 0.6, 0.2] }}
-            transition={{ duration: 4, repeat: Infinity, delay: 1, ease: "easeInOut" }}
-          />
-          <motion.div 
-            className="absolute top-0 left-2/3 w-px h-full bg-gradient-to-b from-transparent via-emerald-300/20 to-transparent"
-            animate={{ opacity: [0.1, 0.5, 0.1] }}
-            transition={{ duration: 5, repeat: Infinity, delay: 2, ease: "easeInOut" }}
-          />
+               backgroundImage: 'url("/map-image.jpg")',
+               backgroundSize: 'cover',
+               backgroundPosition: 'center',
+               filter: 'brightness(0.8) contrast(1.2)'
+             }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/60 via-teal-800/60 to-cyan-700/60" />
+      </div>
+
+      {/* Enhanced Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-emerald-900/80 via-teal-800/80 to-cyan-700/80 backdrop-blur-xl border-b border-white/20 shadow-lg">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="relative">
+                <div className="text-3xl animate-bounce-gentle">🌿</div>
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                <div className="absolute -bottom-1 -left-1 w-1.5 h-1.5 bg-teal-400 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-white mb-1">Nature View</h1>
+                <p className="text-sm text-emerald-200 font-medium">Global Wildlife Explorer</p>
         </div>
       </div>
 
-      {/* Enhanced Hero Section with Glass Morphism */}
-      <div className="relative z-10">
-        <motion.div 
-          className="w-full h-48 bg-gradient-to-b from-white/10 to-transparent backdrop-blur-xl border-b border-white/20"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <div className="flex flex-col h-full px-6">
-            {/* Enhanced Animated Title with Glow Effect */}
-            <div className="text-center pt-6 mb-6">
-              <motion.div 
-                className="relative"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 1, delay: 0.2 }}
-              >
-                <h1 className="text-4xl font-bold text-white mb-2">
-                  <span className="bg-gradient-to-r from-emerald-300 via-teal-300 to-cyan-300 bg-clip-text text-transparent animate-gradient-x">
-                    Habitat Explorer 🌍✨
-                  </span>
-                </h1>
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-300/20 to-teal-300/20 blur-xl animate-pulse" />
-              </motion.div>
-              <motion.p 
-                className="text-emerald-200 text-sm"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-              >
-                Global Wildlife Explorer
-              </motion.p>
+            <nav className="hidden md:flex items-center space-x-8">
+              <Link href="/arctic" className="text-emerald-200 hover:text-white transition-all duration-300 hover:scale-105 font-medium">Arctic Life</Link>
+              <Link href="/forest" className="text-emerald-200 hover:text-white transition-all duration-300 hover:scale-105 font-medium">Forest Realm</Link>
+              <Link href="/mountain" className="text-emerald-200 hover:text-white transition-all duration-300 hover:scale-105 font-medium">Alpine Heights</Link>
+              <Link href="/safari" className="text-emerald-200 hover:text-white transition-all duration-300 hover:scale-105 font-medium">Global Safari</Link>
+            </nav>
+            
+            <div className="flex items-center space-x-3">
+              {/* Music Control Button - Only render on client */}
+              {isClient && (
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    console.log('Music button clicked!')
+                    const audio = (window as any).backgroundAudio
+                    console.log('Audio element:', audio)
+                    if (audio) {
+                      if (isMusicPlaying) {
+                        console.log('Pausing music...')
+                        audio.pause()
+                        setIsMusicPlaying(false)
+                        localStorage.setItem('natureViewMusicPlaying', 'false')
+                      } else {
+                        console.log('Playing music...')
+                        audio.play().then(() => {
+                          console.log('Music started successfully!')
+                          setIsMusicPlaying(true)
+                          localStorage.setItem('natureViewMusicPlaying', 'true')
+                        }).catch((error) => {
+                          console.log('Playback failed:', error)
+                        })
+                      }
+                    } else {
+                      console.log('No audio element found')
+                    }
+                  }}
+                  className="w-12 h-12 bg-gradient-to-br from-emerald-600/60 to-teal-600/60 backdrop-blur-md rounded-full flex items-center justify-center border-2 border-white/30 shadow-lg hover:bg-white/30 transition-all duration-300 relative group cursor-pointer"
+                  title={isMusicPlaying ? "Pause Music" : "Play Music"}
+                >
+                  {isMusicPlaying ? (
+                    <Volume2 className="w-6 h-6 text-white animate-pulse" />
+                  ) : (
+                    <VolumeX className="w-6 h-6 text-white/70" />
+                  )}
+                  {/* Animated sound waves when playing */}
+                  {isMusicPlaying && (
+                    <div className="absolute inset-0 flex items-center justify-center space-x-1">
+                      <div className="w-0.5 h-3 bg-emerald-300 animate-pulse" style={{ animationDelay: '0s' }}></div>
+                      <div className="w-0.5 h-4 bg-emerald-300 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                      <div className="w-0.5 h-2 bg-emerald-300 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                    </div>
+                  )}
+                  {/* Tooltip */}
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1 bg-black/90 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
+                    {isMusicPlaying ? "Pause Music" : "Play Music"}
+                  </div>
+                </motion.button>
+              )}
+              
+              {/* User Avatar */}
+              <div className="relative">
+                <div className="w-10 h-10 bg-gradient-to-br from-emerald-600/40 to-teal-600/40 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 shadow-lg hover:scale-105 transition-all duration-300">
+                  <div className="w-5 h-5 bg-white rounded-full animate-pulse"></div>
+                </div>
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></div>
+              </div>
             </div>
+          </div>
+        </div>
+      </header>
 
-            {/* Enhanced Stats with Smooth Animations */}
-            <div className="flex justify-between items-center h-24">
+      {/* Header Spacer */}
+      <div className="h-20" />
+
+      {/* Stats Bar */}
+      <div className="relative z-10 bg-emerald-700/30 backdrop-blur-md border-b border-emerald-600/30">
+        <div className="container mx-auto px-4 py-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
               {stats.map((stat, index) => (
                 <motion.div
                   key={stat.label}
-                  className="flex flex-col items-center text-center"
-                  initial={{ opacity: 0, y: 20, scale: 0.8 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ 
-                    duration: 0.8, 
-                    delay: 0.8 + index * 0.2,
-                    type: "spring",
-                    stiffness: 100
-                  }}
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <motion.div 
-                    className={`text-3xl mb-2 ${stat.color}`}
-                    animate={{ y: [0, -5, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: index * 0.3 }}
-                  >
-                    {stat.icon}
-                  </motion.div>
-                  <div className="text-xl font-bold text-white mb-1">
-                    {stat.value}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="text-center"
+              >
+                <div className="flex items-center justify-center space-x-2">
+                  <span className="text-lg">{stat.icon}</span>
+                  <div>
+                    <div className="text-sm font-bold text-white">{stat.value}</div>
+                    <div className="text-xs text-emerald-200">{stat.label}</div>
                   </div>
-                  <div className="text-xs text-emerald-200 font-medium mb-1">
-                    {stat.label}
+                  <div className={`text-xs font-bold ${stat.color}`}>{stat.trend}</div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          
+          {/* Live Activity */}
+          <div className="mt-4 pt-4 border-t border-emerald-600/30">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="text-xs text-emerald-200">
+                  Live Activity • {currentTime || "Loading..."}
+                </div>
+                <div className="text-xs text-emerald-300">Last updated: 2 min ago</div>
                   </div>
+              
+              <div className="flex space-x-3">
+                {liveActivity.map((activity, index) => (
                   <motion.div 
-                    className="text-xs text-emerald-300 font-bold"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5, delay: 1.5 + index * 0.2 }}
+                    key={activity.title}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className={`px-3 py-1 rounded-full text-xs text-white bg-gradient-to-r ${activity.color}`}
                   >
-                    {stat.trend}
-                  </motion.div>
+                    <div className="flex items-center space-x-1">
+                      <span>{activity.icon}</span>
+                      <span className="font-medium">{activity.title}</span>
+                    </div>
+                    <div className="text-xs opacity-90">{activity.subtitle}</div>
                 </motion.div>
               ))}
+              </div>
             </div>
           </div>
-        </motion.div>
-
-        {/* Enhanced Achievement Badges with Glass Effect */}
-        <div className="flex justify-center space-x-3 mt-4 px-6">
-          {achievements.map((achievement, index) => (
-            <motion.div
-              key={achievement.label}
-              className="flex items-center space-x-2 bg-white/10 backdrop-blur-xl px-3 py-2 rounded-full border border-white/20 shadow-lg"
-              initial={{ opacity: 0, y: 20, scale: 0.8 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ 
-                duration: 0.6, 
-                delay: 1.5 + index * 0.1,
-                type: "spring",
-                stiffness: 100
-              }}
-              whileHover={{ 
-                scale: 1.05, 
-                backgroundColor: "rgba(255, 255, 255, 0.15)",
-                boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)"
-              }}
+          
+          {/* Action Buttons */}
+          <div className="mt-4 flex items-center justify-center space-x-4">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-medium transition-colors"
             >
-              <achievement.icon className={`h-4 w-4 ${achievement.color}`} />
-              <span className="text-xs text-white font-medium">{achievement.label}</span>
-            </motion.div>
-          ))}
+              View All Regions
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-6 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg font-medium transition-colors flex items-center space-x-2"
+            >
+              <Heart className="w-4 h-4" />
+              <span>Conservation</span>
+            </motion.button>
         </div>
 
-        {/* Enhanced Action Buttons with Glass Morphism */}
-        <div className="flex justify-center space-x-4 mt-4 px-6">
+          {/* Right Side Buttons */}
+          <div className="absolute top-4 right-4 flex space-x-2">
           <motion.button 
-            className="px-6 py-3 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 hover:from-emerald-500/30 hover:to-teal-500/30 text-emerald-200 text-sm border border-emerald-400/30 backdrop-blur-xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-emerald-500/25 rounded-lg"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.8 }}
-            whileHover={{ 
-              scale: 1.05,
-              boxShadow: "0 10px 40px rgba(16, 185, 129, 0.3)"
-            }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <Sparkles className="h-4 w-4 mr-2 inline" />
+              whileHover={{ scale: 1.05 }}
+              className="px-3 py-1 bg-blue-600/30 text-blue-200 rounded text-xs"
+            >
             View Progress
           </motion.button>
           <motion.button 
-            className="px-6 py-3 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 hover:from-blue-500/30 hover:to-cyan-500/30 text-blue-200 text-sm border border-blue-400/30 backdrop-blur-xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-blue-500/25 rounded-lg"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 2.0 }}
-            whileHover={{ 
-              scale: 1.05,
-              boxShadow: "0 10px 40px rgba(14, 165, 233, 0.3)"
-            }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <Zap className="h-4 w-4 mr-2 inline" />
+              whileHover={{ scale: 1.05 }}
+              className="px-3 py-1 bg-emerald-600/30 text-emerald-200 rounded text-xs"
+            >
             Join Community
           </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              className="px-3 py-1 bg-yellow-600/30 text-yellow-200 rounded text-xs"
+            >
+              Achievements
+            </motion.button>
+          </div>
         </div>
       </div>
 
-      {/* Enhanced Regions Section with Glass Cards */}
-      <div className="p-6" ref={scrollRef}>
-        <motion.div 
-          className="text-center mb-8"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 2.2 }}
-        >
-          <h2 className="text-2xl font-bold text-white mb-3">
-            Choose Your Adventure
-          </h2>
-          <p className="text-emerald-200 text-sm">
-            Tap on a region to explore wildlife
-          </p>
-        </motion.div>
-        
-        <div className="space-y-4">
-          {natureRegions.map((region, index) => (
-            <motion.div
-              key={region.id}
-              className={`relative overflow-hidden bg-gradient-to-r ${region.gradient} backdrop-blur-xl rounded-2xl p-6 border border-white/20 transition-all duration-500 transform ${
-                selectedRegion === region.id 
-                  ? 'ring-2 ring-emerald-400 scale-105 shadow-2xl' 
-                  : 'hover:scale-105 hover:shadow-xl'
-              } ${isScrolling ? 'scale-95' : ''}`}
-              initial={{ opacity: 0, x: -50, scale: 0.9 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              transition={{ 
-                duration: 0.8, 
-                delay: 2.5 + index * 0.2,
-                type: "spring",
-                stiffness: 100
+      {/* Interactive Map Section */}
+      <section className="relative w-full h-screen flex items-center justify-center overflow-hidden pt-16">
+        {/* Background Map Image - Full Screen */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="relative w-full h-full flex items-center justify-center">
+            <img
+              src="/map-image.jpg"
+              alt="Nature View World Map"
+              className="w-auto h-auto max-w-full max-h-full object-contain opacity-95"
+              style={{ 
+                width: '100%', 
+                height: '100%',
+                objectFit: 'contain',
+                objectPosition: 'center'
               }}
-              whileHover={{ 
-                scale: 1.02,
-                boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3)",
-                backgroundColor: "rgba(255, 255, 255, 0.15)"
-              }}
-              onClick={() => handleRegionCardClick(region.id)}
-            >
-              {/* Enhanced Animated Background */}
-              <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
-              
-              <div className="relative z-10">
-                <div className="flex items-center space-x-4 mb-3">
+            />
+            
+            {/* Interactive Region Points */}
+            {regions.map((region) => {
+              const pos = isMobile ? region.mobilePosition || region.position : region.position
+              return (
                   <motion.div 
-                    className="text-5xl"
-                    animate={{ y: [0, -5, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: index * 0.5 }}
-                  >
-                    {region.icon}
-                  </motion.div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-white mb-1">{region.displayName}</h3>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-xs px-2 py-1 rounded-full bg-white/20 text-white backdrop-blur-sm">
-                        {region.difficulty}
-                      </span>
-                      <span className="text-xs text-emerald-200">
-                        {region.completion}% complete
-                      </span>
-                    </div>
+                  key={region.id}
+                  className="absolute cursor-pointer z-10"
+                  style={{
+                    left: `${pos.x}%`,
+                    top: `${pos.y}%`,
+                    transform: 'translate(-50%, -50%)'
+                  }}
+                  whileHover={{ scale: 1.1 }}
+                  onClick={() => handleRegionClick(region.id)}
+                  onMouseEnter={() => handleRegionHover(region.id)}
+                  onMouseLeave={() => handleRegionHover(null)}
+                >
+                  <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${region.color} flex items-center justify-center shadow-lg border-2 border-white/20 backdrop-blur-sm`}>
+                    <span className="text-2xl">{region.icon}</span>
                   </div>
-                  <div className="flex flex-col items-end">
-                    <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center mb-2 backdrop-blur-sm">
-                      <div className="w-8 h-8 rounded-full border-2 border-emerald-400 relative">
-                        <motion.div 
-                          className="absolute inset-0 rounded-full bg-emerald-400"
-                          style={{ 
-                            clipPath: `polygon(0 0, 100% 0, 100% 100%, 0 100%)`,
-                          }}
-                          initial={{ rotate: 0 }}
-                          animate={{ rotate: region.completion * 3.6 }}
-                          transition={{ duration: 2, delay: 3 + index * 0.2 }}
-                        />
-                      </div>
-                    </div>
-                    <motion.div
-                      whileHover={{ x: 5 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <ChevronRight className="text-white/60 h-5 w-5" />
-                    </motion.div>
+                  
+                  {/* Region Label */}
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2">
+                    <div className="bg-yellow-500 text-black px-3 py-1 rounded text-xs font-bold whitespace-nowrap shadow-lg">
+                      {region.displayName}
                   </div>
                 </div>
                 
-                <p className="text-emerald-200 text-sm mb-3 leading-relaxed">{region.description}</p>
-                
-                <div className="flex flex-wrap gap-2">
-                  {region.wildlife.slice(0, 3).map((animal, animalIndex) => (
-                    <motion.span
-                      key={animalIndex}
-                      className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs text-white border border-white/20"
+                  {/* Hover Info */}
+                  <AnimatePresence>
+                    {hoveredRegion === region.id && (
+                      <motion.div
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      transition={{ 
-                        duration: 0.5, 
-                        delay: 3.5 + index * 0.2 + animalIndex * 0.1 
-                      }}
-                      whileHover={{ scale: 1.05 }}
-                    >
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-4 w-48 bg-black/90 backdrop-blur-md rounded-lg p-3 border border-white/20 shadow-xl"
+                      >
+                        <div className="text-white text-sm">
+                          <div className="font-bold mb-1">{region.name}</div>
+                          <div className="text-xs text-gray-300 mb-2">{region.description}</div>
+                          <div className="text-xs">
+                            <div className="font-semibold mb-1">Wildlife:</div>
+                            <div className="flex flex-wrap gap-1">
+                              {region.wildlife.slice(0, 3).map((animal, index) => (
+                                <span key={index} className="bg-white/20 px-1 py-0.5 rounded text-xs">
                       {animal}
-                    </motion.span>
+                                </span>
                   ))}
                 </div>
               </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
             </motion.div>
-          ))}
+              )
+            })}
         </div>
       </div>
 
-      {/* Enhanced Footer with Glass Effect */}
-      <motion.div 
-        className="mt-8 p-6 bg-gradient-to-t from-white/10 to-transparent backdrop-blur-xl"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 3.5 }}
-      >
-        <div className="text-center">
-          <motion.div 
-            className="flex items-center justify-center space-x-2 mb-3"
-            animate={{ rotate: [0, 360] }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        {/* All Regions Button */}
+        <div className="absolute bottom-4 right-4 z-20">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/30 shadow-lg"
           >
-            <Globe className="h-6 w-6 text-emerald-300" />
-            <span className="text-white font-bold text-lg">Habitat Explorer</span>
-            <Star className="h-4 w-4 text-yellow-300 animate-pulse" />
-          </motion.div>
-          <p className="text-emerald-200 text-sm mb-3">Global Wildlife Explorer</p>
-          
-          {/* Quick Stats */}
-          <div className="flex justify-center space-x-6 text-xs text-emerald-200">
-            <div className="flex items-center space-x-1">
-              <Target className="h-3 w-3" />
-              <span>Daily Goal: 85%</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <Users className="h-3 w-3" />
-              <span>2,341 Members</span>
-            </div>
-          </div>
+            <Globe className="w-5 h-5" />
+          </motion.button>
         </div>
-      </motion.div>
+      </section>
 
-      {/* Enhanced Region Detail Modal with Glass Morphism */}
-      {selectedRegion && (
+      {/* Enhanced Region Detail Panel */}
+      <AnimatePresence>
+        {selectedRegion && selectedRegionData && (
+          <>
+            {/* Animated Backdrop */}
         <motion.div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4"
+              className="fixed inset-0 bg-black/60 backdrop-blur-md z-40"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-        >
+              onClick={closePanel}
+            />
+            
+            {/* Enhanced Panel */}
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <motion.div 
-            className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl rounded-3xl p-8 w-full max-w-sm border border-white/30 shadow-2xl"
-            initial={{ opacity: 0, scale: 0.8, y: 50 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 50 }}
+                className="bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-xl rounded-3xl border border-white/30 shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
+                initial={{ scale: 0.8, opacity: 0, y: 50 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.8, opacity: 0, y: 50 }}
             transition={{ type: "spring", stiffness: 100, damping: 20 }}
-          >
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center space-x-3">
-                <motion.div 
-                  className="text-4xl"
-                  animate={{ y: [0, -5, 0] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  {natureRegions.find(r => r.id === selectedRegion)?.icon}
-                </motion.div>
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Panel Header with Region Icon */}
+                <div className="relative p-8 border-b border-white/20">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="text-6xl animate-bounce-gentle">
+                        {selectedRegionData.icon}
+                      </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-white">
-                    {natureRegions.find(r => r.id === selectedRegion)?.displayName}
-                  </h3>
-                  <p className="text-emerald-300 text-sm">
-                    {natureRegions.find(r => r.id === selectedRegion)?.difficulty} Level
+                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                          {selectedRegionData.displayName}
+                        </h2>
+                        <p className="text-emerald-200 text-lg">
+                          {selectedRegionData.description}
                   </p>
                 </div>
               </div>
               <motion.button
-                onClick={() => setSelectedRegion(null)}
-                className="text-white hover:bg-white/20 rounded-full p-2 transition-colors"
+                      onClick={closePanel}
+                      className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/30 hover:bg-white/30 transition-all duration-300"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
-                <X className="h-5 w-5" />
+                      <X className="w-6 h-6" />
               </motion.button>
             </div>
             
-            <p className="text-emerald-200 mb-6 leading-relaxed">
-              {natureRegions.find(r => r.id === selectedRegion)?.description}
-            </p>
+
+            </div>
             
-            {/* Enhanced Progress Bar */}
-            <div className="mb-6">
-              <div className="flex justify-between text-sm mb-2">
-                <span className="text-emerald-200">Progress</span>
-                <span className="text-emerald-300 font-bold">
-                  {natureRegions.find(r => r.id === selectedRegion)?.completion}%
-                </span>
+                {/* Panel Content */}
+                <div className="p-8">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {/* Left Column - Wildlife & Progress */}
+                    <div className="space-y-6">
+                      {/* Progress Bar */}
+                      <motion.div 
+                        className="mb-6"
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: 1 }}
+                        transition={{ delay: 0.3, duration: 1 }}
+                      >
+                        <div className="flex justify-between text-white mb-2">
+                          <span className="text-sm font-medium">Exploration Progress</span>
+                          <span className="text-sm font-bold">75%</span>
               </div>
-              <div className="w-full bg-white/20 rounded-full h-2 backdrop-blur-sm">
+                        <div className="w-full bg-white/20 rounded-full h-3 backdrop-blur-sm">
                 <motion.div 
-                  className="bg-gradient-to-r from-emerald-400 to-teal-400 h-2 rounded-full"
+                            className="bg-gradient-to-r from-emerald-400 to-teal-400 h-3 rounded-full"
                   initial={{ width: 0 }}
-                  animate={{ width: `${natureRegions.find(r => r.id === selectedRegion)?.completion}%` }}
-                  transition={{ duration: 1.5, delay: 0.5 }}
+                            animate={{ width: "75%" }}
+                            transition={{ delay: 0.5, duration: 1.5 }}
                 />
               </div>
-            </div>
-            
-            <div className="mb-6">
-              <p className="text-emerald-300 text-sm font-medium mb-3">Featured Wildlife:</p>
-              <div className="flex flex-wrap gap-2">
-                {natureRegions.find(r => r.id === selectedRegion)?.wildlife.map((animal, index) => (
-                  <motion.span
+                      </motion.div>
+
+                      {/* Wildlife Section */}
+                      <motion.div 
+                        initial={{ y: 30, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.4 }}
+                      >
+                        <h3 className="text-xl font-bold text-white mb-4 flex items-center">
+                          <span className="mr-2">🦁</span>
+                          Featured Wildlife
+                        </h3>
+                        <div className="grid grid-cols-2 gap-3">
+                          {selectedRegionData.wildlife.map((animal, index) => (
+                            <motion.div
                     key={index}
-                    className="bg-white/20 backdrop-blur-md px-4 py-2 rounded-full text-sm text-white border border-white/20"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5, delay: 1 + index * 0.1 }}
-                    whileHover={{ scale: 1.05 }}
-                  >
-                    {animal}
-                  </motion.span>
+                              className="bg-white/10 backdrop-blur-md rounded-lg p-3 border border-white/20 hover:bg-white/20 transition-all duration-300"
+                              initial={{ scale: 0.8, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              transition={{ delay: 0.6 + index * 0.1 }}
+                              whileHover={{ scale: 1.05, y: -2 }}
+                            >
+                              <div className="text-center">
+                                <div className="text-xl mb-1">🐾</div>
+                                <div className="text-white font-semibold text-sm">{animal}</div>
+                                <div className="text-emerald-200 text-xs">Native Species</div>
+                              </div>
+                            </motion.div>
                 ))}
               </div>
+                      </motion.div>
+
+                      {/* Action Buttons */}
+                      <motion.div 
+                        className="flex flex-col space-y-4"
+                        initial={{ y: 30, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.8 }}
+                      >
+                        {/* Enhanced View Biome Button */}
+                        <div className="flex justify-center">
+                          <motion.div
+                            initial={{ scale: 0, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
+                            className="relative"
+                          >
+                            {/* Glowing background effect */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 rounded-full blur-xl opacity-50 animate-pulse"></div>
+                            
+                            {/* Main button */}
+                            <Link
+                              href={selectedRegionData.path}
+                              className="relative block"
+                            >
+                              <motion.div
+                                whileHover={{ 
+                                  scale: 1.1,
+                                  rotate: [0, -5, 5, -5, 0],
+                                  transition: { duration: 0.5 }
+                                }}
+                                whileTap={{ scale: 0.95 }}
+                                className="relative bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:via-teal-400 hover:to-cyan-400 text-white font-bold py-4 px-8 md:py-3 md:px-6 rounded-full shadow-2xl border-2 border-white/30 backdrop-blur-md transition-all duration-300 hover:shadow-emerald-500/50 hover:shadow-2xl scale-100 md:scale-80"
+                                animate={{
+                                  boxShadow: [
+                                    "0 0 20px rgba(16, 185, 129, 0.5)",
+                                    "0 0 40px rgba(16, 185, 129, 0.8)",
+                                    "0 0 20px rgba(16, 185, 129, 0.5)"
+                                  ]
+                                }}
+                                transition={{
+                                  duration: 2,
+                                  repeat: Infinity,
+                                  ease: "easeInOut"
+                                }}
+                              >
+                                <div className="flex items-center space-x-3">
+                                  <motion.div
+                                    animate={{ rotate: 360 }}
+                                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                                  >
+                                    <Play className="w-6 h-6 md:w-5 md:h-5" />
+                                  </motion.div>
+                                  <span className="text-lg md:text-base">View Biome</span>
+                                  <motion.div
+                                    animate={{ x: [0, 5, 0] }}
+                                    transition={{ duration: 1, repeat: Infinity, ease: "easeInOut" }}
+                                  >
+                                    <ArrowRight className="w-5 h-5 md:w-4 md:h-4" />
+                                  </motion.div>
+                                </div>
+                              </motion.div>
+                            </Link>
+                            
+                            {/* Floating particles effect */}
+                            <motion.div
+                              className="absolute -top-2 -left-2 w-4 h-4 bg-emerald-300 rounded-full opacity-70"
+                              animate={{
+                                y: [0, -10, 0],
+                                opacity: [0.7, 1, 0.7]
+                              }}
+                              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                            />
+                            <motion.div
+                              className="absolute -bottom-2 -right-2 w-3 h-3 bg-teal-300 rounded-full opacity-70"
+                              animate={{
+                                y: [0, 10, 0],
+                                opacity: [0.7, 1, 0.7]
+                              }}
+                              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                            />
+                          </motion.div>
+                        </div>
+                        
+                        {/* Secondary Action Buttons */}
+                        <div className="flex space-x-3">
+                          <button className="flex-1 bg-white/10 backdrop-blur-md text-white font-bold py-3 px-4 rounded-lg border border-white/30 hover:bg-white/20 transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-2">
+                            <Info className="w-4 h-4" />
+                            <span>Learn More</span>
+                          </button>
+                          <button className="flex-1 bg-white/10 backdrop-blur-md text-white font-bold py-3 px-4 rounded-lg border border-white/30 hover:bg-white/20 transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-2">
+                            <Heart className="w-4 h-4" />
+                            <span>Support</span>
+                          </button>
+                        </div>
+                      </motion.div>
             </div>
             
-            <div className="flex space-x-3">
-              <motion.button 
-                className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-medium py-3 rounded-xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-emerald-500/25"
-                onClick={() => handleExploreRegion(selectedRegion!)}
+                    {/* Right Column - Stats & Projects */}
+                    <div className="space-y-6">
+                      {/* Stats Grid */}
+                      <motion.div 
+                        className="grid grid-cols-2 gap-3"
+                        initial={{ y: 30, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.5 }}
+                      >
+                        {[
+                          { label: "Species Count", value: "24", icon: "🐾", color: "from-emerald-400 to-teal-400" },
+                          { label: "Conservation Status", value: "Protected", icon: "🛡️", color: "from-blue-400 to-cyan-400" },
+                          { label: "Climate Type", value: "Temperate", icon: "🌡️", color: "from-yellow-400 to-orange-400" },
+                          { label: "Ecosystem Health", value: "Excellent", icon: "🌱", color: "from-green-400 to-emerald-400" }
+                        ].map((stat, index) => (
+                          <motion.div
+                            key={stat.label}
+                            className={`bg-gradient-to-br ${stat.color} rounded-lg p-3 text-white backdrop-blur-md border border-white/20`}
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ delay: 0.7 + index * 0.1 }}
                 whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Play className="h-4 w-4 mr-2 inline" />
-                Explore
-              </motion.button>
-              <motion.button 
-                className="flex-1 border-white/30 text-white hover:bg-white/10 font-medium py-3 rounded-xl transition-all duration-300 hover:scale-105 shadow-lg"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Info className="h-4 w-4 mr-2 inline" />
-                Learn More
-              </motion.button>
+                          >
+                            <div className="text-xl mb-1">{stat.icon}</div>
+                            <div className="text-lg font-bold mb-1">{stat.value}</div>
+                            <div className="text-xs opacity-90">{stat.label}</div>
+                          </motion.div>
+                        ))}
+                      </motion.div>
+
+                      {/* Conservation Projects */}
+                      <motion.div 
+                        initial={{ y: 30, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.6 }}
+                      >
+                        <h3 className="text-lg font-bold text-white mb-3 flex items-center">
+                          <span className="mr-2">🌿</span>
+                          Active Conservation Projects
+                        </h3>
+                        <div className="space-y-2">
+                          {[
+                            { title: "Habitat Restoration", progress: 85, color: "from-green-400 to-emerald-400" },
+                            { title: "Species Protection", progress: 72, color: "from-blue-400 to-cyan-400" },
+                            { title: "Community Education", progress: 93, color: "from-purple-400 to-pink-400" }
+                          ].map((project, index) => (
+                            <motion.div
+                              key={project.title}
+                              className="bg-white/10 backdrop-blur-md rounded-lg p-3 border border-white/20"
+                              initial={{ x: 50, opacity: 0 }}
+                              animate={{ x: 0, opacity: 1 }}
+                              transition={{ delay: 0.8 + index * 0.1 }}
+                            >
+                              <div className="flex justify-between items-center mb-2">
+                                <span className="text-white font-medium text-sm">{project.title}</span>
+                                <span className="text-emerald-300 font-bold text-sm">{project.progress}%</span>
+                              </div>
+                              <div className="w-full bg-white/20 rounded-full h-2">
+                                <motion.div 
+                                  className={`bg-gradient-to-r ${project.color} h-2 rounded-full`}
+                                  initial={{ width: 0 }}
+                                  animate={{ width: `${project.progress}%` }}
+                                  transition={{ delay: 1 + index * 0.1, duration: 1 }}
+                                />
+                              </div>
+                            </motion.div>
+                          ))}
             </div>
           </motion.div>
+
+                      {/* Quick Actions */}
+                      <motion.div 
+                        className="flex space-x-2"
+                        initial={{ y: 30, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.9 }}
+                      >
+                        <button className="flex-1 bg-white/10 backdrop-blur-md text-white py-2 px-3 rounded-lg border border-white/30 hover:bg-white/20 transition-all duration-300 flex items-center justify-center space-x-1 text-sm">
+                          <Heart className="w-3 h-3" />
+                          <span>Support</span>
+                        </button>
+                        <button className="flex-1 bg-white/10 backdrop-blur-md text-white py-2 px-3 rounded-lg border border-white/30 hover:bg-white/20 transition-all duration-300 flex items-center justify-center space-x-1 text-sm">
+                          <Users className="w-3 h-3" />
+                          <span>Volunteer</span>
+                        </button>
+                        <button className="flex-1 bg-white/10 backdrop-blur-md text-white py-2 px-3 rounded-lg border border-white/30 hover:bg-white/20 transition-all duration-300 flex items-center justify-center space-x-1 text-sm">
+                          <Share className="w-3 h-3" />
+                          <span>Share</span>
+                        </button>
+                      </motion.div>
+                    </div>
+                  </div>
+                </div>
         </motion.div>
-      )}
+            </div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Enhanced Footer */}
+      <footer className="relative z-10 bg-gradient-to-b from-emerald-900/80 to-teal-900/80 border-t border-white/20 backdrop-blur-xl">
+        <div className="max-w-6xl mx-auto px-4 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            {/* Enhanced Brand */}
+            <div className="md:col-span-2">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="relative">
+                  <Globe className="h-10 w-10 text-emerald-300 animate-spin-slow" />
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></div>
+                  <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-teal-400 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+                </div>
+                <div>
+                  <h3 className="text-3xl font-bold text-white mb-1">
+                    Nature View
+                  </h3>
+                  <div className="flex items-center space-x-2">
+                    <Star className="h-4 w-4 text-yellow-300 animate-pulse" />
+                    <span className="text-emerald-300 text-sm font-medium">Premium Wildlife Explorer</span>
+                  </div>
+                </div>
+              </div>
+              <p className="text-emerald-200 mb-6 max-w-md leading-relaxed">
+                Explore wildlife from every corner of the world through interactive 3D experiences. Learn about conservation, 
+                discover amazing animals, and become an environmental advocate.
+              </p>
+              
+              {/* Enhanced Social Links */}
+              <div className="flex space-x-3 mb-6">
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  className="w-10 h-10 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-emerald-200 hover:text-white hover:bg-white/20 transition-all duration-300 border border-white/20"
+                >
+                  <Twitter className="h-4 w-4" />
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  className="w-10 h-10 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-emerald-200 hover:text-white hover:bg-white/20 transition-all duration-300 border border-white/20"
+                >
+                  <Facebook className="h-4 w-4" />
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  className="w-10 h-10 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-emerald-200 hover:text-white hover:bg-white/20 transition-all duration-300 border border-white/20"
+                >
+                  <Instagram className="h-4 w-4" />
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  className="w-10 h-10 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-emerald-200 hover:text-white hover:bg-white/20 transition-all duration-300 border border-white/20"
+                >
+                  <Github className="h-4 w-4" />
+                </motion.button>
+              </div>
+
+              {/* Quick Stats */}
+              <div className="flex space-x-6 text-sm">
+                <div className="flex items-center space-x-2 text-emerald-200">
+                  <Award className="h-4 w-4" />
+                  <span>5 Regions</span>
+                </div>
+                <div className="flex items-center space-x-2 text-emerald-200">
+                  <Users className="h-4 w-4" />
+                  <span>2,341 Members</span>
+                </div>
+                <div className="flex items-center space-x-2 text-emerald-200">
+                  <TrendingUp className="h-4 w-4" />
+                  <span>150+ Species</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Enhanced Quick Links */}
+            <div>
+              <h4 className="text-lg font-bold text-white mb-4">Explore</h4>
+              <ul className="space-y-3">
+                {[
+                  { icon: Globe, label: "All Regions" },
+                  { icon: Heart, label: "Wildlife Gallery" },
+                  { icon: Leaf, label: "Learning Path" },
+                  { icon: ExternalLink, label: "Conservation" }
+                ].map((item, index) => (
+                  <li key={item.label}>
+                    <motion.button
+                      whileHover={{ scale: 1.05, x: 5 }}
+                      className="text-emerald-200 hover:text-white justify-start p-0 h-auto transition-all duration-300 flex items-center w-full"
+                    >
+                      <item.icon className="h-4 w-4 mr-2" />
+                      {item.label}
+                    </motion.button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Enhanced Contact */}
+            <div>
+              <h4 className="text-lg font-bold text-white mb-4">Contact</h4>
+              <ul className="space-y-3">
+                {[
+                  { icon: Mail, label: "Contact Us" },
+                  { icon: Heart, label: "Support" },
+                  { icon: Globe, label: "Privacy Policy" },
+                  { icon: ExternalLink, label: "Terms of Service" }
+                ].map((item, index) => (
+                  <li key={item.label}>
+                    <motion.button
+                      whileHover={{ scale: 1.05, x: 5 }}
+                      className="text-emerald-200 hover:text-white justify-start p-0 h-auto transition-all duration-300 flex items-center w-full"
+                    >
+                      <item.icon className="h-4 w-4 mr-2" />
+                      {item.label}
+                    </motion.button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Enhanced Bottom Bar */}
+          <div className="border-t border-white/20 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+            <div className="flex items-center space-x-4">
+              <p className="text-emerald-200 text-sm">
+                © 2024 Nature View. All rights reserved.
+              </p>
+              <div className="flex items-center space-x-2">
+                <Heart className="h-4 w-4 text-pink-300 animate-pulse" />
+                <span className="text-emerald-200 text-sm">Made for wildlife conservation</span>
+              </div>
+            </div>
+            <div className="flex items-center space-x-4 mt-4 md:mt-0">
+              <div className="flex items-center space-x-2 text-emerald-200 text-sm">
+                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                <span>Live Updates</span>
+              </div>
+              <div className="flex items-center space-x-2 text-emerald-200 text-sm">
+                <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+                <span>Online</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 } 

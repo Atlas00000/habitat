@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import '../src/styles.css'
+import { GlobalHeader } from '../src/components/GlobalHeader'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -24,6 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} m-0 p-0`} suppressHydrationWarning>
+        <GlobalHeader />
         {children}
       </body>
     </html>

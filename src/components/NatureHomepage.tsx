@@ -69,14 +69,25 @@ const regions: Region[] = [
     icon: "🏔️",
     path: "/mountain"
   },
-
+  {
+    id: "coastal",
+    name: "Coastal Waters",
+    displayName: "COASTAL WATERS",
+    description: "Dive into marine life and ocean ecosystems",
+    position: { x: 70, y: 30 },
+    mobilePosition: { x: 75, y: 35 },
+    color: "from-blue-500 to-cyan-600",
+    wildlife: ["Harbor Seal", "Humpback Whale", "Seagull", "Atlantic Cod"],
+    icon: "🐳",
+    path: "/coastal"
+  },
   {
     id: "forest",
     name: "Forest Realm",
     displayName: "FOREST REALM",
     description: "Wander through dense forests and woodland creatures",
     position: { x: 75, y: 50 },
-    mobilePosition: { x: 75, y: 55 },
+    mobilePosition: { x: 75, y: 45 },
     color: "from-green-500 to-emerald-600",
     wildlife: ["Gray Wolf", "Red Deer", "Great Horned Owl", "Red Fox"],
     icon: "🌲",
@@ -88,7 +99,7 @@ const regions: Region[] = [
     displayName: "GLOBAL SAFARI",
     description: "Experience wildlife from around the world",
     position: { x: 75, y: 60 },
-    mobilePosition: { x: 75, y: 70 },
+    mobilePosition: { x: 75, y: 55 },
     color: "from-yellow-500 to-orange-500",
     wildlife: ["Lion", "Elephant", "Giraffe", "Zebra"],
     icon: "🌎",
@@ -119,20 +130,9 @@ export function NatureHomepage() {
   const [isMobile, setIsMobile] = useState(false)
   const [currentTime, setCurrentTime] = useState<string>("")
   const [activeTrend, setActiveTrend] = useState(0)
-  const [isMusicPlaying, setIsMusicPlaying] = useState(false)
-  const [hasUserInteracted, setHasUserInteracted] = useState(false)
-  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
-    // Set client flag to prevent hydration issues
-    setIsClient(true)
-    
-    // Load saved state from localStorage
-    const savedMusicState = localStorage.getItem('natureViewMusicPlaying') === 'true'
-    const savedInteractionState = localStorage.getItem('natureViewUserInteracted') === 'true'
-    
-    setIsMusicPlaying(savedMusicState)
-    setHasUserInteracted(savedInteractionState)
+
     
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768)
@@ -149,100 +149,12 @@ export function NatureHomepage() {
       setActiveTrend((prev) => (prev + 1) % 4)
     }, 4000)
     
-    // Initialize background music (manual play only)
-    const initMusic = () => {
-      try {
-        const audio = new Audio('/Upbeat_Jungle.mp3')
-        audio.loop = true
-        audio.volume = 0.3 // Set volume to 30%
-        
-        // Check if audio can be loaded
-        audio.addEventListener('canplaythrough', () => {
-          console.log('Audio ready to play')
-        })
-        
-        audio.addEventListener('error', () => {
-          console.log('Audio file not found or cannot be loaded')
-        })
-        
-        // Keep button state in sync with audio state
-        audio.addEventListener('play', () => {
-          console.log('Audio started playing')
-          setIsMusicPlaying(true)
-          localStorage.setItem('natureViewMusicPlaying', 'true')
-        })
-        
-        audio.addEventListener('pause', () => {
-          console.log('Audio paused')
-          setIsMusicPlaying(false)
-          localStorage.setItem('natureViewMusicPlaying', 'false')
-        })
-        
-        // Store audio element for later use
-        ;(window as any).backgroundAudio = audio
-      } catch (error) {
-        console.log('Audio initialization failed')
-      }
-    }
+
     
-    initMusic()
-    
-    // Check if audio is already playing on mount (for page refreshes)
-    const checkAudioState = () => {
-      const audio = (window as any).backgroundAudio
-      if (audio) {
-        // Small delay to ensure audio is loaded
-        setTimeout(() => {
-          if (!audio.paused) {
-            console.log('Audio was already playing, updating state')
-            setIsMusicPlaying(true)
-          }
-        }, 100)
-      }
-    }
-    
-    // Add user interaction listener to enable auto-play
-    const handleUserInteraction = () => {
-      if (!hasUserInteracted) {
-        setHasUserInteracted(true)
-        localStorage.setItem('natureViewUserInteracted', 'true')
-        const audio = (window as any).backgroundAudio
-        if (audio && !isMusicPlaying) {
-          audio.play().then(() => {
-            console.log('Auto-play started on user interaction!')
-            setIsMusicPlaying(true)
-            localStorage.setItem('natureViewMusicPlaying', 'true')
-          }).catch((error) => {
-            console.log('Auto-play failed:', error)
-          })
-        }
-        // Remove listeners after first interaction
-        document.removeEventListener('click', handleUserInteraction)
-        document.removeEventListener('keydown', handleUserInteraction)
-        document.removeEventListener('touchstart', handleUserInteraction)
-      }
-    }
-    
-    // Check audio state after initialization
-    setTimeout(checkAudioState, 200)
-    
-    // Add event listeners for user interaction (removed scroll to prevent premature triggering)
-    document.addEventListener('click', handleUserInteraction)
-    document.addEventListener('keydown', handleUserInteraction)
-    document.addEventListener('touchstart', handleUserInteraction)
-    
-          return () => {
-        window.removeEventListener('resize', checkMobile)
-        clearInterval(timeInterval)
-        clearInterval(trendInterval)
-        document.removeEventListener('click', handleUserInteraction)
-        document.removeEventListener('keydown', handleUserInteraction)
-        document.removeEventListener('touchstart', handleUserInteraction)
-        const audio = (window as any).backgroundAudio
-        if (audio) {
-          audio.pause()
-          audio.currentTime = 0
-        }
+    return () => {
+      window.removeEventListener('resize', checkMobile)
+      clearInterval(timeInterval)
+      clearInterval(trendInterval)
     }
   }, [])
 
@@ -259,8 +171,8 @@ export function NatureHomepage() {
   }
 
   const selectedRegionData = selectedRegion ? regions.find(r => r.id === selectedRegion) : null
-
-  return (
+          
+          return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-teal-800 to-cyan-700 nature-view-gradient overflow-hidden">
       {/* Background Audio */}
       <audio src="/Upbeat_Jungle.mp3" loop preload="auto" />
@@ -278,120 +190,145 @@ export function NatureHomepage() {
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/60 via-teal-800/60 to-cyan-700/60" />
       </div>
 
-      {/* Enhanced Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-emerald-900/80 via-teal-800/80 to-cyan-700/80 backdrop-blur-xl border-b border-white/20 shadow-lg">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <div className="text-3xl animate-bounce-gentle">🌿</div>
-                <div className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-                <div className="absolute -bottom-1 -left-1 w-1.5 h-1.5 bg-teal-400 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-white mb-1">Nature View</h1>
-                <p className="text-sm text-emerald-200 font-medium">Global Wildlife Explorer</p>
-        </div>
-      </div>
 
-            <nav className="hidden md:flex items-center space-x-8">
-              <Link href="/arctic" className="text-emerald-200 hover:text-white transition-all duration-300 hover:scale-105 font-medium">Arctic Life</Link>
-              <Link href="/forest" className="text-emerald-200 hover:text-white transition-all duration-300 hover:scale-105 font-medium">Forest Realm</Link>
-              <Link href="/mountain" className="text-emerald-200 hover:text-white transition-all duration-300 hover:scale-105 font-medium">Alpine Heights</Link>
-              <Link href="/safari" className="text-emerald-200 hover:text-white transition-all duration-300 hover:scale-105 font-medium">Global Safari</Link>
-            </nav>
-            
-            <div className="flex items-center space-x-3">
-              {/* Music Control Button - Only render on client */}
-              {isClient && (
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => {
-                    console.log('Music button clicked!')
-                    const audio = (window as any).backgroundAudio
-                    console.log('Audio element:', audio)
-                    if (audio) {
-                      if (isMusicPlaying) {
-                        console.log('Pausing music...')
-                        audio.pause()
-                        setIsMusicPlaying(false)
-                        localStorage.setItem('natureViewMusicPlaying', 'false')
-                      } else {
-                        console.log('Playing music...')
-                        audio.play().then(() => {
-                          console.log('Music started successfully!')
-                          setIsMusicPlaying(true)
-                          localStorage.setItem('natureViewMusicPlaying', 'true')
-                        }).catch((error) => {
-                          console.log('Playback failed:', error)
-                        })
-                      }
-                    } else {
-                      console.log('No audio element found')
-                    }
-                  }}
-                  className="w-12 h-12 bg-gradient-to-br from-emerald-600/60 to-teal-600/60 backdrop-blur-md rounded-full flex items-center justify-center border-2 border-white/30 shadow-lg hover:bg-white/30 transition-all duration-300 relative group cursor-pointer"
-                  title={isMusicPlaying ? "Pause Music" : "Play Music"}
-                >
-                  {isMusicPlaying ? (
-                    <Volume2 className="w-6 h-6 text-white animate-pulse" />
-                  ) : (
-                    <VolumeX className="w-6 h-6 text-white/70" />
-                  )}
-                  {/* Animated sound waves when playing */}
-                  {isMusicPlaying && (
-                    <div className="absolute inset-0 flex items-center justify-center space-x-1">
-                      <div className="w-0.5 h-3 bg-emerald-300 animate-pulse" style={{ animationDelay: '0s' }}></div>
-                      <div className="w-0.5 h-4 bg-emerald-300 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                      <div className="w-0.5 h-2 bg-emerald-300 animate-pulse" style={{ animationDelay: '0.4s' }}></div>
-                    </div>
-                  )}
-                  {/* Tooltip */}
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1 bg-black/90 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
-                    {isMusicPlaying ? "Pause Music" : "Play Music"}
-                  </div>
-                </motion.button>
-              )}
-              
-              {/* User Avatar */}
-              <div className="relative">
-                <div className="w-10 h-10 bg-gradient-to-br from-emerald-600/40 to-teal-600/40 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 shadow-lg hover:scale-105 transition-all duration-300">
-                  <div className="w-5 h-5 bg-white rounded-full animate-pulse"></div>
-                </div>
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full animate-pulse"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
 
-      {/* Header Spacer */}
-      <div className="h-20" />
-
-      {/* Stats Bar */}
-      <div className="relative z-10 bg-emerald-700/30 backdrop-blur-md border-b border-emerald-600/30">
-        <div className="container mx-auto px-4 py-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+             {/* Enhanced Stats Bar */}
+       <div className="relative z-10 bg-gradient-to-r from-emerald-800/40 via-teal-700/40 to-cyan-700/40 backdrop-blur-xl border-b border-white/20 shadow-lg">
+         <div className="container mx-auto px-4 py-4">
+           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
               {stats.map((stat, index) => (
                 <motion.div
                   key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="text-center"
-              >
-                <div className="flex items-center justify-center space-x-2">
-                  <span className="text-lg">{stat.icon}</span>
-                  <div>
-                    <div className="text-sm font-bold text-white">{stat.value}</div>
-                    <div className="text-xs text-emerald-200">{stat.label}</div>
+                  initial={{ opacity: 0, y: 20, scale: 0.8 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ 
+                     duration: 0.6, 
+                     delay: index * 0.1,
+                    type: "spring",
+                    stiffness: 100
+                  }}
+                   whileHover={{ 
+                     scale: 1.05,
+                     y: -2,
+                     transition: { duration: 0.2 }
+                   }}
+                   className="relative group cursor-pointer"
+                 >
+                   {/* Enhanced Stat Container */}
+                   <div className="bg-white/10 backdrop-blur-md rounded-lg p-3 border border-white/20 hover:bg-white/20 transition-all duration-300 relative overflow-hidden">
+                     {/* Animated background gradient */}
+                     <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                     
+                     {/* Glowing effect on hover */}
+                     <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-emerald-400/20 to-cyan-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm"></div>
+                     
+                     <div className="relative z-10">
+                       <div className="flex items-center justify-center space-x-2">
+                         {/* Enhanced Icon with Animation */}
+                  <motion.div 
+                           className="relative"
+                           animate={{ 
+                             scale: [1, 1.1, 1],
+                             rotate: [0, 3, -3, 0]
+                           }}
+                           transition={{
+                             duration: 3,
+                             repeat: Infinity,
+                             ease: "easeInOut",
+                             delay: index * 0.5
+                           }}
+                         >
+                           <span className="text-lg drop-shadow-lg">{stat.icon}</span>
+                           {/* Pulsing ring effect */}
+                           <motion.div
+                             className="absolute inset-0 rounded-full border border-white/30"
+                             animate={{
+                               scale: [1, 1.3, 1],
+                               opacity: [0.5, 0, 0.5]
+                             }}
+                             transition={{
+                               duration: 2,
+                               repeat: Infinity,
+                               ease: "easeInOut"
+                             }}
+                           />
+                  </motion.div>
+                         
+                         <div>
+                           {/* Enhanced Value with Glow */}
+                           <motion.div 
+                             className="text-sm font-bold text-white"
+                             animate={{ 
+                               textShadow: [
+                                 "0 0 5px rgba(255,255,255,0.3)",
+                                 "0 0 8px rgba(255,255,255,0.6)",
+                                 "0 0 5px rgba(255,255,255,0.3)"
+                               ]
+                             }}
+                             transition={{
+                               duration: 2,
+                               repeat: Infinity,
+                               ease: "easeInOut"
+                             }}
+                           >
+                    {stat.value}
+                           </motion.div>
+                           <div className="text-xs text-emerald-200">{stat.label}</div>
                   </div>
-                  <div className={`text-xs font-bold ${stat.color}`}>{stat.trend}</div>
-                </div>
-              </motion.div>
-            ))}
+                         
+                         {/* Enhanced Trend Indicator */}
+                  <motion.div 
+                           className={`text-xs font-bold px-2 py-1 rounded-full inline-flex items-center space-x-1 ${
+                             stat.trend.includes('+') 
+                               ? 'bg-green-500/20 text-green-300 border border-green-400/30' 
+                               : 'bg-blue-500/20 text-blue-300 border border-blue-400/30'
+                           }`}
+                           animate={{
+                             scale: [1, 1.05, 1],
+                             opacity: [0.8, 1, 0.8]
+                           }}
+                           transition={{
+                             duration: 2,
+                             repeat: Infinity,
+                             ease: "easeInOut"
+                           }}
+                         >
+                           <motion.span 
+                             className="text-xs"
+                             animate={{ 
+                               rotate: stat.trend.includes('+') ? [0, 15, 0] : [0, -15, 0]
+                             }}
+                             transition={{
+                               duration: 1.5,
+                               repeat: Infinity,
+                               ease: "easeInOut"
+                             }}
+                           >
+                             {stat.trend.includes('+') ? '↗' : '↘'}
+                           </motion.span>
+                           <span>{stat.trend}</span>
+                  </motion.div>
+            </div>
           </div>
+
+                     {/* Floating particles effect */}
+            <motion.div
+                       className="absolute top-1 right-1 w-1.5 h-1.5 bg-emerald-300 rounded-full opacity-60"
+                       animate={{
+                         y: [0, -3, 0],
+                         opacity: [0.6, 1, 0.6]
+                       }}
+              transition={{ 
+                         duration: 2,
+                         repeat: Infinity,
+                         ease: "easeInOut",
+                         delay: index * 0.3
+                       }}
+                     />
+                   </div>
+                 </motion.div>
+               ))}
+           </div>
           
           {/* Live Activity */}
           <div className="mt-4 pt-4 border-t border-emerald-600/30">
@@ -417,24 +354,17 @@ export function NatureHomepage() {
                       <span className="font-medium">{activity.title}</span>
                     </div>
                     <div className="text-xs opacity-90">{activity.subtitle}</div>
-                </motion.div>
-              ))}
+            </motion.div>
+          ))}
               </div>
             </div>
-          </div>
-          
+        </div>
+
           {/* Action Buttons */}
           <div className="mt-4 flex items-center justify-center space-x-4">
-            <motion.button
+          <motion.button 
               whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-medium transition-colors"
-            >
-              View All Regions
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            whileTap={{ scale: 0.95 }}
               className="px-6 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg font-medium transition-colors flex items-center space-x-2"
             >
               <Heart className="w-4 h-4" />
@@ -442,27 +372,7 @@ export function NatureHomepage() {
             </motion.button>
         </div>
 
-          {/* Right Side Buttons */}
-          <div className="absolute top-4 right-4 flex space-x-2">
-          <motion.button 
-              whileHover={{ scale: 1.05 }}
-              className="px-3 py-1 bg-blue-600/30 text-blue-200 rounded text-xs"
-            >
-            View Progress
-          </motion.button>
-          <motion.button 
-              whileHover={{ scale: 1.05 }}
-              className="px-3 py-1 bg-emerald-600/30 text-emerald-200 rounded text-xs"
-            >
-            Join Community
-          </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              className="px-3 py-1 bg-yellow-600/30 text-yellow-200 rounded text-xs"
-            >
-              Achievements
-            </motion.button>
-          </div>
+
         </div>
       </div>
 
@@ -487,29 +397,90 @@ export function NatureHomepage() {
             {regions.map((region) => {
               const pos = isMobile ? region.mobilePosition || region.position : region.position
               return (
-                  <motion.div 
-                  key={region.id}
+            <motion.div
+              key={region.id}
                   className="absolute cursor-pointer z-10"
                   style={{
                     left: `${pos.x}%`,
                     top: `${pos.y}%`,
                     transform: 'translate(-50%, -50%)'
                   }}
-                  whileHover={{ scale: 1.1 }}
+                  whileHover={{ scale: 1.15, rotate: 5 }}
+                  whileTap={{ scale: 0.9 }}
                   onClick={() => handleRegionClick(region.id)}
                   onMouseEnter={() => handleRegionHover(region.id)}
                   onMouseLeave={() => handleRegionHover(null)}
                 >
-                  <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${region.color} flex items-center justify-center shadow-lg border-2 border-white/20 backdrop-blur-sm`}>
-                    <span className="text-2xl">{region.icon}</span>
-                  </div>
+                  {/* Enhanced Icon Container */}
+                  <motion.div 
+                    className={`relative w-20 h-20 rounded-full bg-gradient-to-br ${region.color} flex items-center justify-center shadow-2xl border-3 border-white/30 backdrop-blur-md overflow-hidden`}
+                    animate={{
+                      boxShadow: [
+                        `0 0 20px ${region.color.split(' ')[1].replace('to-', '')}/50`,
+                        `0 0 40px ${region.color.split(' ')[1].replace('to-', '')}/80`,
+                        `0 0 20px ${region.color.split(' ')[1].replace('to-', '')}/50`
+                      ]
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  >
+                    {/* Animated background ring */}
+                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-white/20 to-transparent animate-spin" style={{ animationDuration: '8s' }}></div>
+                    
+                    {/* Main icon */}
+                  <motion.div 
+                      className="relative z-10"
+                      animate={{ 
+                        scale: [1, 1.1, 1],
+                        rotate: [0, 5, -5, 0]
+                      }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    >
+                      <span className="text-3xl drop-shadow-lg">{region.icon}</span>
+                  </motion.div>
+                    
+                    {/* Pulsing ring effect */}
+                        <motion.div 
+                      className="absolute inset-0 rounded-full border-2 border-white/40"
+                      animate={{
+                        scale: [1, 1.2, 1],
+                        opacity: [0.5, 0, 0.5]
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                  </motion.div>
                   
-                  {/* Region Label */}
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2">
-                    <div className="bg-yellow-500 text-black px-3 py-1 rounded text-xs font-bold whitespace-nowrap shadow-lg">
-                      {region.displayName}
+                  {/* Enhanced Region Label */}
+                    <motion.div
+                    className="absolute top-full left-1/2 transform -translate-x-1/2 mt-3"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap shadow-xl border border-white/30 backdrop-blur-sm">
+                    <div className="flex items-center space-x-2">
+                        <span className="text-xs">📍</span>
+                        <span>{region.displayName}</span>
+                        <motion.div 
+                          animate={{ x: [0, 3, 0] }}
+                          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                        >
+                          <span className="text-xs">→</span>
+                    </motion.div>
                   </div>
                 </div>
+                    </motion.div>
                 
                   {/* Hover Info */}
                   <AnimatePresence>
@@ -532,9 +503,9 @@ export function NatureHomepage() {
                                 </span>
                   ))}
                 </div>
+                </div>
               </div>
-                        </div>
-                      </motion.div>
+            </motion.div>
                     )}
                   </AnimatePresence>
             </motion.div>
@@ -560,7 +531,7 @@ export function NatureHomepage() {
         {selectedRegion && selectedRegionData && (
           <>
             {/* Animated Backdrop */}
-        <motion.div 
+      <motion.div 
               className="fixed inset-0 bg-black/60 backdrop-blur-md z-40"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -572,10 +543,15 @@ export function NatureHomepage() {
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <motion.div 
                 className="bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-xl rounded-3xl border border-white/30 shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
-                initial={{ scale: 0.8, opacity: 0, y: 50 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.8, opacity: 0, y: 50 }}
-            transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                initial={{ scale: 0.3, opacity: 0, y: 100, rotate: -10 }}
+                animate={{ scale: 1, opacity: 1, y: 0, rotate: 0 }}
+                exit={{ scale: 0.3, opacity: 0, y: 100, rotate: 10 }}
+            transition={{ 
+              type: "spring", 
+              stiffness: 150, 
+              damping: 15,
+              duration: 0.6
+            }}
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Panel Header with Region Icon */}
@@ -613,7 +589,7 @@ export function NatureHomepage() {
                     {/* Left Column - Wildlife & Progress */}
                     <div className="space-y-6">
                       {/* Progress Bar */}
-                      <motion.div 
+          <motion.div 
                         className="mb-6"
                         initial={{ scaleX: 0 }}
                         animate={{ scaleX: 1 }}
@@ -631,7 +607,7 @@ export function NatureHomepage() {
                             transition={{ delay: 0.5, duration: 1.5 }}
                 />
               </div>
-                      </motion.div>
+          </motion.div>
 
                       {/* Wildlife Section */}
                       <motion.div 
@@ -657,10 +633,10 @@ export function NatureHomepage() {
                                 <div className="text-xl mb-1">🐾</div>
                                 <div className="text-white font-semibold text-sm">{animal}</div>
                                 <div className="text-emerald-200 text-xs">Native Species</div>
-                              </div>
+            </div>
                             </motion.div>
                 ))}
-              </div>
+            </div>
                       </motion.div>
 
                       {/* Action Buttons */}
@@ -721,7 +697,7 @@ export function NatureHomepage() {
                                   >
                                     <ArrowRight className="w-5 h-5 md:w-4 md:h-4" />
                                   </motion.div>
-                                </div>
+          </div>
                               </motion.div>
                             </Link>
                             
@@ -755,14 +731,14 @@ export function NatureHomepage() {
                             <Heart className="w-4 h-4" />
                             <span>Support</span>
                           </button>
-                        </div>
-                      </motion.div>
+        </div>
+      </motion.div>
             </div>
-            
+
                     {/* Right Column - Stats & Projects */}
                     <div className="space-y-6">
                       {/* Stats Grid */}
-                      <motion.div 
+        <motion.div 
                         className="grid grid-cols-2 gap-3"
                         initial={{ y: 30, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
@@ -774,7 +750,7 @@ export function NatureHomepage() {
                           { label: "Climate Type", value: "Temperate", icon: "🌡️", color: "from-yellow-400 to-orange-400" },
                           { label: "Ecosystem Health", value: "Excellent", icon: "🌱", color: "from-green-400 to-emerald-400" }
                         ].map((stat, index) => (
-                          <motion.div
+          <motion.div 
                             key={stat.label}
                             className={`bg-gradient-to-br ${stat.color} rounded-lg p-3 text-white backdrop-blur-md border border-white/20`}
                             initial={{ scale: 0.8, opacity: 0 }}
@@ -790,7 +766,7 @@ export function NatureHomepage() {
                       </motion.div>
 
                       {/* Conservation Projects */}
-                      <motion.div 
+                <motion.div 
                         initial={{ y: 30, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.6 }}
@@ -824,7 +800,7 @@ export function NatureHomepage() {
                                   transition={{ delay: 1 + index * 0.1, duration: 1 }}
                                 />
                               </div>
-                            </motion.div>
+                </motion.div>
                           ))}
             </div>
           </motion.div>
@@ -877,8 +853,8 @@ export function NatureHomepage() {
                   <div className="flex items-center space-x-2">
                     <Star className="h-4 w-4 text-yellow-300 animate-pulse" />
                     <span className="text-emerald-300 text-sm font-medium">Premium Wildlife Explorer</span>
-                  </div>
                 </div>
+              </div>
               </div>
               <p className="text-emerald-200 mb-6 max-w-md leading-relaxed">
                 Explore wildlife from every corner of the world through interactive 3D experiences. Learn about conservation, 
@@ -887,8 +863,8 @@ export function NatureHomepage() {
               
               {/* Enhanced Social Links */}
               <div className="flex space-x-3 mb-6">
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
+              <motion.button
+                whileHover={{ scale: 1.1 }}
                   className="w-10 h-10 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-emerald-200 hover:text-white hover:bg-white/20 transition-all duration-300 border border-white/20"
                 >
                   <Twitter className="h-4 w-4" />
@@ -910,26 +886,26 @@ export function NatureHomepage() {
                   className="w-10 h-10 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-emerald-200 hover:text-white hover:bg-white/20 transition-all duration-300 border border-white/20"
                 >
                   <Github className="h-4 w-4" />
-                </motion.button>
-              </div>
-
+              </motion.button>
+            </div>
+            
               {/* Quick Stats */}
               <div className="flex space-x-6 text-sm">
                 <div className="flex items-center space-x-2 text-emerald-200">
                   <Award className="h-4 w-4" />
                   <span>5 Regions</span>
-                </div>
+              </div>
                 <div className="flex items-center space-x-2 text-emerald-200">
                   <Users className="h-4 w-4" />
                   <span>2,341 Members</span>
-                </div>
+              </div>
                 <div className="flex items-center space-x-2 text-emerald-200">
                   <TrendingUp className="h-4 w-4" />
                   <span>150+ Species</span>
-                </div>
+            </div>
               </div>
             </div>
-
+            
             {/* Enhanced Quick Links */}
             <div>
               <h4 className="text-lg font-bold text-white mb-4">Explore</h4>
@@ -941,13 +917,13 @@ export function NatureHomepage() {
                   { icon: ExternalLink, label: "Conservation" }
                 ].map((item, index) => (
                   <li key={item.label}>
-                    <motion.button
+              <motion.button 
                       whileHover={{ scale: 1.05, x: 5 }}
                       className="text-emerald-200 hover:text-white justify-start p-0 h-auto transition-all duration-300 flex items-center w-full"
                     >
                       <item.icon className="h-4 w-4 mr-2" />
                       {item.label}
-                    </motion.button>
+              </motion.button>
                   </li>
                 ))}
               </ul>
@@ -964,13 +940,13 @@ export function NatureHomepage() {
                   { icon: ExternalLink, label: "Terms of Service" }
                 ].map((item, index) => (
                   <li key={item.label}>
-                    <motion.button
+              <motion.button 
                       whileHover={{ scale: 1.05, x: 5 }}
                       className="text-emerald-200 hover:text-white justify-start p-0 h-auto transition-all duration-300 flex items-center w-full"
-                    >
+              >
                       <item.icon className="h-4 w-4 mr-2" />
                       {item.label}
-                    </motion.button>
+              </motion.button>
                   </li>
                 ))}
               </ul>

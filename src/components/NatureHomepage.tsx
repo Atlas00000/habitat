@@ -30,6 +30,7 @@ import {
   Volume2,
   VolumeX
 } from "lucide-react"
+import { useLoading } from './LoadingProvider'
 
 interface Region {
   id: string
@@ -130,6 +131,7 @@ export function NatureHomepage() {
   const [isMobile, setIsMobile] = useState(false)
   const [currentTime, setCurrentTime] = useState<string>("")
   const [activeTrend, setActiveTrend] = useState(0)
+  const { isLoading } = useLoading()
 
   useEffect(() => {
 
@@ -171,8 +173,13 @@ export function NatureHomepage() {
   }
 
   const selectedRegionData = selectedRegion ? regions.find(r => r.id === selectedRegion) : null
-          
-          return (
+  
+  // Don't render content while loading
+  if (isLoading) {
+    return null
+  }
+
+  return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-900 via-teal-800 to-cyan-700 nature-view-gradient overflow-hidden">
       {/* Background Audio */}
       <audio src="/Upbeat_Jungle.mp3" loop preload="auto" />
@@ -369,7 +376,7 @@ export function NatureHomepage() {
             >
               <Heart className="w-4 h-4" />
               <span>Conservation</span>
-            </motion.button>
+          </motion.button>
         </div>
 
 
@@ -531,7 +538,7 @@ export function NatureHomepage() {
         {selectedRegion && selectedRegionData && (
           <>
             {/* Animated Backdrop */}
-      <motion.div 
+        <motion.div 
               className="fixed inset-0 bg-black/60 backdrop-blur-md z-40"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

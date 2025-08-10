@@ -288,8 +288,8 @@ export const EnvironmentScene: React.FC<EnvironmentSceneProps> = ({
         <group position={[0, 2, 0]}>
           <LoadingSpinner 
             size={1.5} 
-            color="#3B82F6" 
-            message={`Loading ${category} environment...`} 
+            color="#8B4513" 
+            message={`Loading ${selectedAnimal?.name || category} environment...`} 
           />
         </group>
       )}

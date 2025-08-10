@@ -13,6 +13,7 @@ const config: Config = {
         'spin-slow': 'spin-slow 4s linear infinite',
         'float': 'float 3s ease-in-out infinite',
         'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'bear-walk': 'bear-walk 4s ease-in-out infinite',
       },
       keyframes: {
         'spin-slow': {
@@ -22,6 +23,12 @@ const config: Config = {
         'float': {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%': { transform: 'translateY(-20px)' },
+        },
+        'bear-walk': {
+          '0%, 100%': { transform: 'translateX(0px) scale(1)' },
+          '25%': { transform: 'translateX(10px) scale(1.05)' },
+          '50%': { transform: 'translateX(20px) scale(1)' },
+          '75%': { transform: 'translateX(10px) scale(0.95)' },
         },
       },
       colors: {
@@ -57,6 +64,31 @@ const config: Config = {
         },
         ring: 'hsl(var(--ring))',
         input: 'hsl(var(--input))',
+        // Bear-themed colors
+        bear: {
+          50: '#fdf8f3',
+          100: '#f9e8d8',
+          200: '#f3d1b5',
+          300: '#eab388',
+          400: '#e08c5a',
+          500: '#d6733d',
+          600: '#c75a2e',
+          700: '#a64428',
+          800: '#843a2a',
+          900: '#6b3226',
+        },
+        forest: {
+          50: '#f0f9f4',
+          100: '#dcf2e3',
+          200: '#bce4c9',
+          300: '#8dd0a3',
+          400: '#56b375',
+          500: '#3a9a5d',
+          600: '#2e7b4c',
+          700: '#28623f',
+          800: '#234e35',
+          900: '#1f412e',
+        },
       },
     },
   },

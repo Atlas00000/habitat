@@ -39,23 +39,27 @@ function ModelComponent({
   const [error, setError] = useState<Error | null>(null)
   const [animations, setAnimations] = useState<any[]>([])
   const [mixer, setMixer] = useState<any>(null)
+  const [retryCount, setRetryCount] = useState(0)
   const groupRef = useRef<THREE.Group>(null)
   const { isPreloaded, isLoading } = useModelPreloader()
 
   // Use proxy URL to avoid CORS issues with retry mechanism
   const proxyUrl = `/api/proxy?url=${encodeURIComponent(asset.url)}`
   
-  // Load the model using useGLTF with error handling
+  // Load the model using useGLTF with improved error handling
   const { scene, animations: modelAnimations } = useGLTF(proxyUrl, true, true, (error) => {
-    console.warn(`Failed to load ${asset.name} textures:`, error)
-    // Continue loading even if textures fail
+    // Only log texture errors in development mode
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(`Texture loading warning for ${asset.name}:`, error)
+    }
+    // Continue loading even if textures fail - fallback colors will be applied
   })
 
 
 
-  // Ensure materials are properly set up for raccoon
+  // Ensure materials are properly set up with fallback colors
   useEffect(() => {
-    if (scene && asset.id === 'raccoon-model') {
+    if (scene) {
       // Give textures time to load before applying fallback colors
       const timer = setTimeout(() => {
         scene.traverse((child) => {
@@ -67,8 +71,16 @@ function ModelComponent({
                   mat.needsUpdate = true
                   // Don't override color if texture exists
                 } else if (mat.color && !mat.map) {
-                  // Only apply fallback color if no texture map exists after delay
-                  mat.color.setHex(0x8B7355) // Brown color for raccoon
+                  // Apply fallback colors based on asset type
+                  if (asset.id === 'black-bear-model') {
+                    mat.color.setHex(0x3E2723) // Dark brown for bear
+                  } else if (asset.id === 'forest2-landscape-bear' || asset.id === 'forest2-landscape') {
+                    mat.color.setHex(0x4A7C59) // Forest green for landscape
+                  } else if (asset.id === 'raccoon-model') {
+                    mat.color.setHex(0x8B7355) // Brown color for raccoon
+                  } else {
+                    mat.color.setHex(0x8B7355) // Default brown
+                  }
                 }
               })
             } else {
@@ -76,13 +88,21 @@ function ModelComponent({
                 child.material.needsUpdate = true
                 // Don't override color if texture exists
               } else if (child.material.color && !child.material.map) {
-                // Only apply fallback color if no texture map exists after delay
-                child.material.color.setHex(0x8B7355) // Brown color for raccoon
+                // Apply fallback colors based on asset type
+                if (asset.id === 'black-bear-model') {
+                  child.material.color.setHex(0x3E2723) // Dark brown for bear
+                } else if (asset.id === 'forest2-landscape-bear' || asset.id === 'forest2-landscape') {
+                  child.material.color.setHex(0x4A7C59) // Forest green for landscape
+                } else if (asset.id === 'raccoon-model') {
+                  child.material.color.setHex(0x8B7355) // Brown color for raccoon
+                } else {
+                  child.material.color.setHex(0x8B7355) // Default brown
+                }
               }
             }
           }
         })
-      }, 2000) // Wait 2 seconds for textures to load
+      }, 1500) // Reduced wait time for textures to load
 
       return () => clearTimeout(timer)
     }
@@ -188,7 +208,14 @@ function ModelComponent({
   }
 
   if (!scene) {
-    return null
+    return (
+      <group position={getAssetPosition()}>
+        <mesh>
+          <boxGeometry args={[0.5, 0.5, 0.5]} />
+          <meshStandardMaterial color="#8B7355" />
+        </mesh>
+      </group>
+    )
   }
 
   // Show cache status in console for debugging (only in development)

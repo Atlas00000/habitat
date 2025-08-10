@@ -221,26 +221,6 @@ function ModelComponent({
     return null
   }
 
-  if (!scene) {
-    return (
-      <group position={getAssetPosition()}>
-        <mesh>
-          <boxGeometry args={[0.5, 0.5, 0.5]} />
-          <meshStandardMaterial color="#8B7355" />
-        </mesh>
-      </group>
-    )
-  }
-
-  // Show cache status in console for debugging (only in development)
-  if (process.env.NODE_ENV === 'development') {
-    if (isPreloaded(asset)) {
-      console.log(`Model ${asset.name} loaded from cache`)
-    } else if (isLoading(asset)) {
-      console.log(`Model ${asset.name} is currently loading`)
-    }
-  }
-
   // Adjust position based on asset type
   const getAssetPosition = (): [number, number, number] => {
     // Use the passed position parameter if provided, otherwise use defaults
@@ -273,6 +253,26 @@ function ModelComponent({
       return [1, 1, 1]
     }
     return [1, 1, 1]
+  }
+
+  if (!scene) {
+    return (
+      <group position={getAssetPosition()}>
+        <mesh>
+          <boxGeometry args={[0.5, 0.5, 0.5]} />
+          <meshStandardMaterial color="#8B7355" />
+        </mesh>
+      </group>
+    )
+  }
+
+  // Show cache status in console for debugging (only in development)
+  if (process.env.NODE_ENV === 'development') {
+    if (isPreloaded(asset)) {
+      console.log(`Model ${asset.name} loaded from cache`)
+    } else if (isLoading(asset)) {
+      console.log(`Model ${asset.name} is currently loading`)
+    }
   }
 
   return (

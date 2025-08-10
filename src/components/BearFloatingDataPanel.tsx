@@ -75,7 +75,7 @@ export const BearFloatingDataPanel: React.FC<BearFloatingDataPanelProps> = React
     setShowUI(prev => !prev);
   }, [])
 
-  const handlePanelHover = useCallback((panel: string) => {
+  const handlePanelHover = useCallback((panel: string | null) => {
     setHoveredPanel(panel);
   }, []);
 

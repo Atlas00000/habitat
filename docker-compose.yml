@@ -4,5 +4,12 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=production
-    restart: unless-stopped 
+      - NODE_ENV=development
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3" 

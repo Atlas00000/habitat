@@ -12,12 +12,14 @@ export interface ArcticRegionViewerProps {
   className?: string
   category?: string
   selectedAnimal?: any
+  onSceneReady?: () => void
 }
 
 export const ArcticRegionViewer: React.FC<ArcticRegionViewerProps> = ({ 
   className = '', 
   category = 'arctic',
-  selectedAnimal
+  selectedAnimal,
+  onSceneReady
 }) => {
   const [selectedAsset, setSelectedAsset] = useState<CloudflareAsset | null>(null)
   const [cameraMode, setCameraMode] = useState<'orbit' | 'follow'>('orbit')
@@ -61,7 +63,10 @@ export const ArcticRegionViewer: React.FC<ArcticRegionViewerProps> = ({
             onAssetSelect={handleAssetSelect}
             cameraMode={cameraMode}
             showCameraInfo={showCameraInfo}
-            onSceneReady={() => setIsSceneLoading(false)}
+            onSceneReady={() => {
+              setIsSceneLoading(false)
+              onSceneReady?.()
+            }}
             enableShadows={enableShadows}
             selectedAnimal={selectedAnimal}
           />

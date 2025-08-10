@@ -6,6 +6,7 @@ import { ArrowLeft, Info, Eye, EyeOff, TreePine, Leaf, Mountain, Moon } from 'lu
 import { Animal } from '../data/deer-data'
 import { BearPawIcon, BearPawPrint, BearClawIcon } from './BearPawIcon'
 import { ArcticRegionViewer } from './ArcticRegionViewer'
+import { AnimalLoadingScreen } from './AnimalLoadingScreen'
 import { motion, AnimatePresence } from 'framer-motion'
 
 // Lazy load components for better performance
@@ -31,6 +32,8 @@ export const BearAnimalPage: React.FC<BearAnimalPageProps> = ({
 }) => {
   const [showDataPanel, setShowDataPanel] = useState(true)
   const [selectedAnimal, setSelectedAnimal] = useState(animal)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isModelLoaded, setIsModelLoaded] = useState(false)
 
   const handleBack = () => {
     if (backUrl) {
@@ -40,28 +43,50 @@ export const BearAnimalPage: React.FC<BearAnimalPageProps> = ({
     }
   }
 
+  const handleModelLoaded = () => {
+    setIsModelLoaded(true)
+  }
+
+  const handleLoadingComplete = () => {
+    setIsLoading(false)
+  }
+
   return (
     <main className="w-full h-screen bg-gradient-to-br from-bear-50 via-forest-50 to-bear-100 relative overflow-hidden">
+      {/* Animal Loading Screen */}
+      <AnimatePresence>
+        {isLoading && (
+          <AnimalLoadingScreen
+            animalName={animal.name}
+            onLoadingComplete={handleLoadingComplete}
+            isModelLoaded={isModelLoaded}
+          />
+        )}
+      </AnimatePresence>
       {/* Enhanced background elements - lazy loaded */}
       <Suspense fallback={null}>
         <BearBackgroundElements />
       </Suspense>
 
       <div className="w-full h-full relative">
-        {/* 3D Environment Viewer */}
-        <ArcticRegionViewer category={category} selectedAnimal={animal} />
+                      {/* 3D Environment Viewer */}
+              <ArcticRegionViewer 
+                category={category} 
+                selectedAnimal={animal} 
+                onSceneReady={handleModelLoaded}
+              />
         
         {/* Enhanced Bear-specific overlay with habitat gradients */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="absolute top-4 left-4 z-20 bg-gradient-to-br from-bear-50/95 to-forest-50/95 backdrop-blur-md rounded-xl p-6 max-w-md shadow-2xl border border-bear-200/30"
+          className="absolute top-4 left-4 z-20 bg-gradient-to-br from-bear-50/95 to-forest-50/95 backdrop-blur-md rounded-xl p-3 md:p-6 max-w-[85vw] md:max-w-md shadow-2xl border border-bear-200/30"
         >
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-3">
-              <BearPawIcon size={28} color="#8B4513" />
-              <h2 className="text-2xl font-bold text-bear-900 flex items-center">
+          <div className="flex items-center justify-between mb-3 md:mb-4">
+            <div className="flex items-center space-x-2 md:space-x-3">
+              <BearPawIcon size={24} color="#8B4513" className="md:w-7 md:h-7" />
+              <h2 className="text-lg md:text-2xl font-bold text-bear-900 flex items-center">
                 {animal.name} Habitat
               </h2>
             </div>
@@ -75,11 +100,11 @@ export const BearAnimalPage: React.FC<BearAnimalPageProps> = ({
             </Button>
           </div>
           
-          <p className="text-sm text-bear-800 mb-4 leading-relaxed">
+          <p className="text-xs md:text-sm text-bear-800 mb-3 md:mb-4 leading-relaxed">
             {environmentDescription}
           </p>
           
-          <div className="space-y-3">
+          <div className="space-y-2 md:space-y-3">
             {features.map((feature, index) => (
               <motion.div 
                 key={index} 
@@ -88,16 +113,16 @@ export const BearAnimalPage: React.FC<BearAnimalPageProps> = ({
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="flex items-center space-x-2"
               >
-                <BearClawIcon size={16} color="#8B4513" />
-                <span className="text-xs text-bear-700">{feature}</span>
+                <BearClawIcon size={14} color="#8B4513" className="md:w-4 md:h-4" />
+                <span className="text-xs text-bear-700 leading-tight">{feature}</span>
               </motion.div>
             ))}
           </div>
           
-          <div className="mt-4 pt-4 border-t border-amber-200">
+          <div className="mt-3 md:mt-4 pt-3 md:pt-4 border-t border-amber-200">
             <div className="flex items-center space-x-2 text-xs text-bear-600">
               <Info className="h-3 w-3" />
-              <span>Explore the {animal.name.toLowerCase()} habitat and learn fascinating facts</span>
+              <span className="leading-tight">Explore the {animal.name.toLowerCase()} habitat and learn fascinating facts</span>
             </div>
           </div>
         </motion.div>

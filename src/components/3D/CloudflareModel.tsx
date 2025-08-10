@@ -138,17 +138,21 @@ function ModelComponent({
             
             if (bearIdleSmell) {
               const action = newMixer.clipAction(bearIdleSmell)
-              action.setLoop(loop ? THREE.LoopRepeat : THREE.LoopOnce, 0)
+              action.setLoop(THREE.LoopRepeat, Infinity) // Force infinite loop
               action.setEffectiveTimeScale(animationSpeed)
+              action.clampWhenFinished = false // Don't clamp at the end
               action.play()
+              console.log(`Playing bear animation: ${bearIdleSmell.name} with infinite loop`)
             } else {
               // Fallback to first animation if bear_idle_smell not found
               const firstClip = modelAnimations[0]
               if (firstClip) {
                 const action = newMixer.clipAction(firstClip)
-                action.setLoop(loop ? THREE.LoopRepeat : THREE.LoopOnce, 0)
+                action.setLoop(THREE.LoopRepeat, Infinity) // Force infinite loop
                 action.setEffectiveTimeScale(animationSpeed)
+                action.clampWhenFinished = false // Don't clamp at the end
                 action.play()
+                console.log(`Playing fallback bear animation: ${firstClip.name} with infinite loop`)
               }
             }
           } else if (asset.id === 'jaguar-model') {
@@ -156,8 +160,9 @@ function ModelComponent({
             modelAnimations.forEach((clip) => {
               const action = newMixer.clipAction(clip)
               if (autoPlay) {
-                action.setLoop(loop ? THREE.LoopRepeat : THREE.LoopOnce, 0)
+                action.setLoop(THREE.LoopRepeat, Infinity) // Force infinite loop
                 action.setEffectiveTimeScale(animationSpeed)
+                action.clampWhenFinished = false // Don't clamp at the end
                 action.play()
               }
             })
@@ -166,8 +171,9 @@ function ModelComponent({
             modelAnimations.forEach((clip) => {
               const action = newMixer.clipAction(clip)
               if (autoPlay) {
-                action.setLoop(loop ? THREE.LoopRepeat : THREE.LoopOnce, 0)
+                action.setLoop(THREE.LoopRepeat, Infinity) // Force infinite loop
                 action.setEffectiveTimeScale(animationSpeed)
+                action.clampWhenFinished = false // Don't clamp at the end
                 action.play()
               }
             })
@@ -177,7 +183,15 @@ function ModelComponent({
     }
     
     setupAnimations()
-  }, [scene, isLoaded, onLoad, modelAnimations, asset.name, autoPlay, loop, animationSpeed])
+    
+    // Cleanup function to dispose mixer when component unmounts
+    return () => {
+      if (mixer) {
+        mixer.stopAllAction()
+        mixer.uncacheRoot(scene)
+      }
+    }
+  }, [scene, isLoaded, onLoad, modelAnimations, asset.name, autoPlay, loop, animationSpeed, mixer])
 
   // Update animation mixer on each frame
   useFrame((state, delta) => {

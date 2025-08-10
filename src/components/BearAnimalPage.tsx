@@ -7,6 +7,7 @@ import { Animal } from '../data/deer-data'
 import { BearPawIcon, BearPawPrint, BearClawIcon } from './BearPawIcon'
 import { ArcticRegionViewer } from './ArcticRegionViewer'
 import { AnimalLoadingScreen } from './AnimalLoadingScreen'
+import { BearMobileFactSheet } from './BearMobileFactSheet'
 import { motion, AnimatePresence } from 'framer-motion'
 
 // Lazy load components for better performance
@@ -145,8 +146,8 @@ export const BearAnimalPage: React.FC<BearAnimalPageProps> = ({
           </Button>
         </motion.div>
 
-        {/* Habitat Environment Cards */}
-        <div className="absolute bottom-4 left-4 z-20 space-y-3">
+        {/* Habitat Environment Cards - Desktop Only */}
+        <div className="hidden md:block absolute bottom-4 left-4 z-20 space-y-3">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -184,29 +185,34 @@ export const BearAnimalPage: React.FC<BearAnimalPageProps> = ({
           </motion.div>
         </div>
 
-        {/* Comprehensive Data Panel - lazy loaded */}
+        {/* Mobile Fact Sheet */}
+        <BearMobileFactSheet animal={animal} />
+
+        {/* Comprehensive Data Panel - Desktop Only */}
         <AnimatePresence>
           {showDataPanel && selectedAnimal && (
-            <Suspense fallback={
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="fixed inset-0 z-30 flex items-center justify-center bg-black/20"
-              >
-                <div className="bg-white/90 backdrop-blur-md rounded-xl p-4">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-bear-600"></div>
-                </div>
-              </motion.div>
-            }>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.3 }}
-              >
-                <BearFloatingDataPanel animal={selectedAnimal} />
-              </motion.div>
-            </Suspense>
+            <div className="hidden md:block">
+              <Suspense fallback={
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="fixed inset-0 z-30 flex items-center justify-center bg-black/20"
+                >
+                  <div className="bg-white/90 backdrop-blur-md rounded-xl p-4">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-bear-600"></div>
+                  </div>
+                </motion.div>
+              }>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <BearFloatingDataPanel animal={selectedAnimal} />
+                </motion.div>
+              </Suspense>
+            </div>
           )}
         </AnimatePresence>
       </div>

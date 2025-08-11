@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { ArcticRegionViewer } from './ArcticRegionViewer'
 import { FloatingDataPanel } from './FloatingDataPanel'
+import { MobileFactSheet } from './MobileFactSheet'
 import { Button } from '../ui/button'
 import { ArrowLeft, Info, Eye, EyeOff, MapPin, Users, Calendar } from 'lucide-react'
 import { Animal } from '../data/deer-data'
@@ -15,6 +16,49 @@ interface AnimalPageProps {
   backUrl?: string
   backLabel?: string
 }
+
+// Theme configurations for different regions
+const regionThemes = {
+  forest: {
+    primary: 'bg-green-600',
+    secondary: 'bg-green-100/50',
+    accent: 'bg-green-200/50',
+    background: 'from-green-50/95 to-emerald-50/95',
+    border: 'border-green-200/30',
+    text: 'text-green-900',
+    textSecondary: 'text-green-700'
+  },
+  arctic: {
+    primary: 'bg-blue-600',
+    secondary: 'bg-blue-100/50',
+    accent: 'bg-blue-200/50',
+    background: 'from-blue-50/95 to-cyan-50/95',
+    border: 'border-blue-200/30',
+    text: 'text-blue-900',
+    textSecondary: 'text-blue-700'
+  },
+  safari: {
+    primary: 'bg-yellow-600',
+    secondary: 'bg-yellow-100/50',
+    accent: 'bg-yellow-200/50',
+    background: 'from-yellow-50/95 to-orange-50/95',
+    border: 'border-yellow-200/30',
+    text: 'text-yellow-900',
+    textSecondary: 'text-yellow-700'
+  },
+  mountain: {
+    primary: 'bg-gray-600',
+    secondary: 'bg-gray-100/50',
+    accent: 'bg-gray-200/50',
+    background: 'from-gray-50/95 to-slate-50/95',
+    border: 'border-gray-200/30',
+    text: 'text-gray-900',
+    textSecondary: 'text-gray-700'
+  }
+}
+
+// Default theme for unknown regions
+const defaultTheme = regionThemes.forest
 
 export const AnimalPage: React.FC<AnimalPageProps> = ({
   animal,
@@ -33,6 +77,23 @@ export const AnimalPage: React.FC<AnimalPageProps> = ({
     } else {
       window.history.back()
     }
+  }
+
+  // Get theme based on category
+  const theme = regionThemes[category as keyof typeof regionThemes] || defaultTheme
+
+  // Get appropriate icon based on animal name
+  const getAnimalIcon = () => {
+    const animalName = animal.name.toLowerCase()
+    if (animalName.includes('bear')) return '🐻'
+    if (animalName.includes('deer')) return '🦌'
+    if (animalName.includes('fox')) return '🦊'
+    if (animalName.includes('raccoon')) return '🦝'
+    if (animalName.includes('jaguar')) return '🐆'
+    if (animalName.includes('lion')) return '🦁'
+    if (animalName.includes('polar')) return '🐻‍❄️'
+    if (animalName.includes('goat')) return '🐐'
+    return '🐾'
   }
 
   return (
@@ -90,9 +151,19 @@ export const AnimalPage: React.FC<AnimalPageProps> = ({
           </Button>
         </div>
 
-        {/* Comprehensive Data Panel */}
+        {/* Mobile Fact Sheet */}
+        <MobileFactSheet 
+          animal={animal}
+          theme={theme}
+          icon={<span className="text-lg">{getAnimalIcon()}</span>}
+          title={`${animal.name} Fact Sheet`}
+        />
+
+        {/* Comprehensive Data Panel - Desktop Only */}
         {showDataPanel && selectedAnimal && (
-          <FloatingDataPanel animal={selectedAnimal} />
+          <div className="hidden md:block">
+            <FloatingDataPanel animal={selectedAnimal} />
+          </div>
         )}
       </div>
     </main>

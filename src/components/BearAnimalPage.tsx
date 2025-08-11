@@ -7,7 +7,7 @@ import { Animal } from '../data/deer-data'
 import { BearPawIcon, BearPawPrint, BearClawIcon } from './BearPawIcon'
 import { ArcticRegionViewer } from './ArcticRegionViewer'
 import { AnimalLoadingScreen } from './AnimalLoadingScreen'
-import { BearMobileFactSheet } from './BearMobileFactSheet'
+import { MobileFactSheet } from './MobileFactSheet'
 import { motion, AnimatePresence } from 'framer-motion'
 
 // Lazy load components for better performance
@@ -186,7 +186,20 @@ export const BearAnimalPage: React.FC<BearAnimalPageProps> = ({
         </div>
 
         {/* Mobile Fact Sheet */}
-        <BearMobileFactSheet animal={animal} />
+        <MobileFactSheet 
+          animal={animal}
+          theme={{
+            primary: 'bg-amber-600',
+            secondary: 'bg-amber-100/50',
+            accent: 'bg-amber-200/50',
+            background: 'from-amber-50/95 to-orange-50/95',
+            border: 'border-amber-200/30',
+            text: 'text-amber-900',
+            textSecondary: 'text-amber-700'
+          }}
+          icon={<BearClawIcon size={16} color="#8B4513" />}
+          title="Bear Fact Sheet"
+        />
 
         {/* Comprehensive Data Panel - Desktop Only */}
         <AnimatePresence>

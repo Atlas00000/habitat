@@ -1,68 +1,33 @@
-export const mountainGoatData = {
+import { Animal } from './deer-data'
+
+export const mountainGoatData: Animal = {
   name: "Mountain Goat",
   scientificName: "Oreamnos americanus",
-  family: "Bovidae",
-  habitat: "Alpine and subalpine regions",
-  range: "North American mountain ranges",
-  
-  // Physical characteristics
-  physical: {
-    height: "3.5-4 feet at shoulder",
-    weight: "100-300 pounds",
-    lifespan: "12-15 years",
-    coat: "Thick white fur with black horns",
-    adaptations: [
-      "Sharp hooves for climbing",
-      "Thick wool undercoat",
-      "Excellent balance",
-      "Strong climbing muscles"
-    ]
-  },
-
-  // Behavior
-  behavior: {
-    social: "Live in small herds",
-    activity: "Diurnal (active during day)",
-    movement: "Excellent climbers",
-    communication: "Bleating sounds",
-    diet: "Herbivorous - grasses, herbs, shrubs"
-  },
-
-  // Habitat details
-  habitatDetails: {
-    elevation: "6,000-14,000 feet",
-    terrain: "Rocky cliffs and steep slopes",
-    climate: "Cold alpine conditions",
-    vegetation: "Alpine meadows and rocky outcrops"
-  },
-
-  // Conservation
-  conservation: {
-    status: "Least Concern",
-    threats: [
-      "Climate change affecting alpine habitats",
-      "Human development",
-      "Recreational activities"
-    ],
-    population: "Stable",
-    protection: "Protected in many national parks"
-  },
-
-  // Fun facts
-  funFacts: [
-    "Can climb slopes up to 60 degrees",
-    "Hooves have rubbery pads for grip",
-    "Both males and females have horns",
-    "Can jump up to 12 feet",
-    "Excellent eyesight for spotting predators",
-    "Can survive in temperatures below -50°F"
+  habitat: "Alpine and subalpine regions of North American mountain ranges, including rocky cliffs, steep slopes, and alpine meadows at elevations of 6,000-14,000 feet. They prefer cold alpine conditions with sparse vegetation.",
+  diet: [
+    "Grasses and sedges",
+    "Herbs and forbs",
+    "Shrubs and woody plants",
+    "Mosses and lichens",
+    "Alpine flowers",
+    "Tree bark and twigs in winter",
+    "Mineral-rich soil and salt deposits"
   ],
-
-  // Seasonal behavior
-  seasonal: {
-    summer: "Graze in high alpine meadows",
-    winter: "Descend to lower elevations",
-    breeding: "November-December",
-    gestation: "6 months"
+  conservationStatus: "Least Concern",
+  funFacts: [
+    "Mountain goats can climb slopes up to 60 degrees and jump up to 12 feet",
+    "Their hooves have specialized rubbery pads that provide excellent grip on rocky surfaces",
+    "Both males and females have black horns that grow throughout their lives",
+    "They have excellent eyesight and can spot predators from great distances",
+    "Mountain goats can survive in temperatures below -50°F with their thick wool undercoat",
+    "They are excellent swimmers and will cross rivers and lakes when necessary",
+    "Mountain goats have a unique social structure with females leading the herds",
+    "They can digest tough alpine vegetation that other animals cannot eat"
+  ],
+  stats: {
+    weight: "100-300 lbs (males), 80-250 lbs (females)",
+    height: "3.5-4 feet at shoulder, 4-6 feet from nose to tail",
+    lifespan: "12-15 years in the wild, up to 20 years in captivity",
+    speed: "15-20 mph (24-32 km/h) on flat ground, excellent climbing speed"
   }
 } 

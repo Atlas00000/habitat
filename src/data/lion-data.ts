@@ -1,69 +1,33 @@
-export const lionData = {
+import { Animal } from './deer-data'
+
+export const lionData: Animal = {
   name: "Lion",
   scientificName: "Panthera leo",
-  family: "Felidae",
-  habitat: "Savannas, grasslands, and open woodlands",
-  range: "Sub-Saharan Africa and small population in India",
-  
-  // Physical characteristics
-  physical: {
-    height: "3.5-4 feet at shoulder",
-    weight: "330-550 pounds (males), 265-395 pounds (females)",
-    lifespan: "10-14 years in wild",
-    coat: "Short tawny fur, males have manes",
-    adaptations: [
-      "Powerful jaws and sharp teeth",
-      "Excellent night vision",
-      "Strong muscular build",
-      "Retractable claws"
-    ]
-  },
-
-  // Behavior
-  behavior: {
-    social: "Live in prides (family groups)",
-    activity: "Crepuscular (active at dawn/dusk)",
-    movement: "Walk and run on four legs",
-    communication: "Roars, growls, and body language",
-    diet: "Carnivorous - primarily large herbivores"
-  },
-
-  // Habitat details
-  habitatDetails: {
-    elevation: "Sea level to 3,000 feet",
-    terrain: "Open grasslands and savannas",
-    climate: "Hot and dry with seasonal rains",
-    vegetation: "Tall grasses and scattered trees"
-  },
-
-  // Conservation
-  conservation: {
-    status: "Vulnerable",
-    threats: [
-      "Habitat loss and fragmentation",
-      "Human-wildlife conflict",
-      "Poaching and trophy hunting",
-      "Declining prey populations"
-    ],
-    population: "Declining - estimated 20,000-30,000",
-    protection: "Protected in many national parks and reserves"
-  },
-
-  // Fun facts
-  funFacts: [
-    "Lions are the only cats that live in groups",
-    "A lion's roar can be heard up to 5 miles away",
-    "Lions can sleep up to 20 hours per day",
-    "Female lions do most of the hunting",
-    "Lions can run up to 50 mph in short bursts",
-    "A lion's mane gets darker as it ages"
+  habitat: "Savannas, grasslands, and open woodlands across Sub-Saharan Africa and small populations in India. They prefer open habitats with tall grasses and scattered trees, typically found at elevations from sea level to 3,000 feet.",
+  diet: [
+    "Large herbivores (zebras, wildebeest, buffalo)",
+    "Medium-sized prey (antelopes, gazelles)",
+    "Small mammals (hares, rodents)",
+    "Birds and reptiles",
+    "Carrion and scavenged kills",
+    "Occasionally fish and crocodiles",
+    "Young elephants and giraffes (when available)"
   ],
-
-  // Seasonal behavior
-  seasonal: {
-    dry: "Hunt near water sources",
-    wet: "Disperse across larger areas",
-    breeding: "Year-round",
-    gestation: "3.5 months"
+  conservationStatus: "Vulnerable",
+  funFacts: [
+    "Lions are the only cats that live in social groups called prides",
+    "A lion's roar can be heard up to 5 miles away and is used to communicate with pride members",
+    "Lions can sleep up to 20 hours per day, conserving energy for hunting",
+    "Female lions do most of the hunting, working together in coordinated groups",
+    "Lions can run up to 50 mph in short bursts but prefer to stalk their prey",
+    "A lion's mane gets darker and fuller as it ages, indicating health and dominance",
+    "Lions have excellent night vision and are most active during dawn and dusk",
+    "Lion cubs are born with spots that fade as they mature"
+  ],
+  stats: {
+    weight: "330-550 lbs (males), 265-395 lbs (females)",
+    height: "3.5-4 feet at shoulder, 5-8 feet from nose to tail",
+    lifespan: "10-14 years in the wild, up to 20 years in captivity",
+    speed: "50 mph (80 km/h) in short bursts, 30 mph sustained"
   }
 } 
